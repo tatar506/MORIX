@@ -3,234 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORIX SCRIPTS | Evolution</title>
+    <title>MORIX SCRIPTS | Secure Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #8b5cf6; --bg: #06060a; }
-        body { background: var(--bg); color: #e2e8f0; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
-
-        /* Приветственная анимация */
-        #intro {
-            position: fixed; inset: 0; background: #000; z-index: 1000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 1s ease-out, visibility 1s;
-        }
-        .intro-text {
-            font-size: 4rem; font-weight: 900; letter-spacing: -2px;
-            background: linear-gradient(to right, #fff, var(--accent));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: intro-glow 2s ease-in-out infinite alternate;
-        }
-        @keyframes intro-glow { from { filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0)); } to { filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8)); } }
-
-        /* Стекло и Дизайн */
-        .glass { background: rgba(15, 15, 25, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
-        .card-anim { transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
-        .card-anim:hover { transform: translateY(-5px) scale(1.01); border-color: var(--accent); }
-
-        /* Боковое меню */
-        #sideMenu {
-            position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%;
-            z-index: 100; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px);
-            border-left: 1px solid rgba(139, 92, 246, 0.3);
-        }
-        #sideMenu.active { right: 0; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 90; }
-        .overlay.active { opacity: 1; visibility: visible; }
-
-        /* Плавающая кнопка */
-        .fab {
-            position: fixed; bottom: 30px; right: 30px; width: 64px; height: 64px;
-            background: var(--accent); border-radius: 50%; z-index: 80;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-            cursor: pointer; transition: 0.3s;
-        }
-        .fab:hover { transform: rotate(90deg) scale(1.1); box-shadow: 0 0 30px rgba(139, 92, 246, 0.8); }
-
-        /* Стили для скролла */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
-        pre { white-space: pre-wrap; word-break: break-all; }
+        :root { --accent: #a855f7; --bg: #09090b; }
+        body { background: var(--bg); color: #fafafa; font-family: sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(18, 18, 24, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .hidden-screen { display: none; }
+        .fab { position: fixed; bottom: 2rem; right: 2rem; width: 4rem; height: 4rem; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 50; box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
     </style>
 </head>
 <body>
 
-    <!-- ПРИВЕТСТВИЕ -->
-    <div id="intro">
-        <div class="intro-text">MORIX</div>
-        <div class="text-gray-500 tracking-[0.5em] text-xs mt-4 animate-pulse">LOADING ECOSYSTEM</div>
+    <!-- 1. ПРОВЕРКА НА БОТА -->
+    <div id="botScreen" class="fixed inset-0 z-[100] bg-black flex items-center justify-center p-6 text-center">
+        <div class="max-w-sm">
+            <h1 class="text-4xl font-black mb-4 tracking-tighter">MORIX VERIFY</h1>
+            <p class="text-gray-500 mb-8 text-sm">Докажите, что вы человек, чтобы войти в экосистему</p>
+            <button onclick="verifyBot()" class="w-full py-4 bg-white text-black font-bold rounded-2xl hover:bg-purple-500 hover:text-white transition transform active:scale-95">Я НЕ РОБОТ</button>
+        </div>
     </div>
 
-    <!-- ФОНОВЫЕ СВЕЧЕНИЯ -->
-    <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/20 blur-[120px] rounded-full"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-900/10 blur-[120px] rounded-full"></div>
-
-    <!-- НАВИГАЦИЯ -->
-    <nav class="glass sticky top-0 z-40 px-6 py-5">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center font-black">M</div>
-                <h1 class="text-2xl font-black tracking-tighter uppercase">Morix <span class="text-purple-500">Scripts</span></h1>
-            </div>
-            <div class="relative group">
-                <input type="text" id="searchInput" placeholder="Поиск скриптов..." 
-                    class="bg-white/5 border border-white/10 px-6 py-2 rounded-full w-64 md:w-96 focus:border-purple-500 focus:w-[450px] transition-all outline-none">
+    <!-- 2. АВТОРИЗАЦИЯ -->
+    <div id="authScreen" class="hidden-screen fixed inset-0 bg-black flex items-center justify-center p-6">
+        <div class="glass p-8 rounded-[2.5rem] w-full max-w-md">
+            <h2 id="authTitle" class="text-2xl font-bold mb-6 text-center">Вход в систему</h2>
+            <div class="space-y-4">
+                <input type="text" id="authUser" placeholder="Логин" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500">
+                <input type="password" id="authPass" placeholder="Пароль" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500">
+                <button onclick="handleAuth()" id="authBtn" class="w-full bg-purple-600 py-4 rounded-2xl font-bold">ВОЙТИ</button>
+                <p onclick="toggleAuthMode()" id="authToggle" class="text-center text-xs text-gray-500 cursor-pointer hover:text-white">Нет аккаунта? Создать</p>
             </div>
         </div>
-    </nav>
-
-    <!-- ЛЕНТА -->
-    <main class="max-w-4xl mx-auto px-6 py-10">
-        <div id="scriptsList" class="grid grid-cols-1 gap-8">
-            <!-- Скрипты -->
-        </div>
-    </main>
-
-    <!-- ПЛАВАЮЩАЯ КНОПКА (ОТКРЫТЬ МЕНЮ) -->
-    <div class="fab" onclick="toggleMenu(true)">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path>
-        </svg>
     </div>
 
-    <!-- ЗАТЕМНЕНИЕ -->
-    <div class="overlay" onclick="toggleMenu(false)"></div>
+    <!-- 3. ГЛАВНАЯ СТРАНИЦА -->
+    <div id="mainScreen" class="hidden-screen">
+        <nav class="glass sticky top-0 z-40 px-6 py-4 flex justify-between items-center">
+            <span class="font-black text-xl tracking-tighter uppercase">MORIX <span class="text-purple-500">SCRIPTS</span></span>
+            <div class="flex items-center gap-4">
+                <input type="text" id="searchInput" placeholder="Поиск..." class="bg-white/5 border border-white/10 px-4 py-1.5 rounded-full text-sm outline-none">
+                <span id="userNameDisplay" class="text-xs font-bold text-purple-400"></span>
+            </div>
+        </nav>
 
-    <!-- БОКОВОЕ МЕНЮ (МЕНЮШКА СОЗДАНИЯ) -->
-    <div id="sideMenu" class="p-8 flex flex-col">
-        <div class="flex justify-between items-center mb-10">
-            <h2 class="text-2xl font-bold">Новый пост</h2>
-            <button onclick="toggleMenu(false)" class="text-gray-500 hover:text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+        <main class="max-w-4xl mx-auto p-6" id="scriptsList"></main>
+        
+        <div class="fab" onclick="document.getElementById('sideMenu').style.right='0';">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
         </div>
+    </div>
 
-        <div class="space-y-5 overflow-y-auto pr-2">
-            <div>
-                <label class="text-xs text-gray-400 mb-2 block uppercase tracking-widest">Название</label>
-                <input type="text" id="title" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500">
-            </div>
-            <div>
-                <label class="text-xs text-gray-400 mb-2 block uppercase tracking-widest">Lua Скрипт</label>
-                <textarea id="code" class="w-full h-40 bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 font-mono text-xs"></textarea>
-            </div>
-            <div>
-                <label class="text-xs text-gray-400 mb-2 block uppercase tracking-widest">Медиа (5 сек)</label>
-                <input type="file" id="fileInput" accept="image/*,video/*" class="hidden">
-                <div onclick="document.getElementById('fileInput').click()" id="preview" class="w-full h-40 border-2 border-dashed border-white/10 rounded-2xl flex items-center justify-center cursor-pointer overflow-hidden hover:border-purple-500 transition">
-                    <span class="text-gray-500 text-sm">Прикрепить файл</span>
-                </div>
-            </div>
-            <button id="submitBtn" onclick="submitPost()" class="w-full bg-purple-600 py-4 rounded-2xl font-bold hover:bg-purple-500 transition shadow-lg shadow-purple-500/20">
-                Опубликовать
-            </button>
+    <!-- 4. СТРАНИЦА СКРИПТА (ОТДЕЛЬНАЯ) -->
+    <div id="viewScreen" class="hidden-screen min-h-screen p-6">
+        <button onclick="showScreen('mainScreen')" class="mb-8 flex items-center gap-2 text-gray-500 hover:text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg> Назад
+        </button>
+        <div id="singleScriptContent" class="max-w-4xl mx-auto"></div>
+    </div>
+
+    <!-- МЕНЮ СОЗДАНИЯ (SIDE) -->
+    <div id="sideMenu" class="fixed top-0 right-[-100%] w-full max-w-md h-full glass z-50 transition-all duration-500 p-8">
+        <div class="flex justify-between mb-8"><h2 class="text-xl font-bold">Новый Скрипт</h2><button onclick="this.parentElement.parentElement.style.right='-100%'">❌</button></div>
+        <div class="space-y-4">
+            <input type="text" id="sTitle" placeholder="Название" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl outline-none">
+            <textarea id="sCode" placeholder="Lua код" class="w-full h-48 bg-white/5 border border-white/10 p-4 rounded-xl font-mono text-xs outline-none"></textarea>
+            <input type="file" id="fInput" class="hidden" onchange="previewFile(this)">
+            <div onclick="document.getElementById('fInput').click()" id="fPreview" class="w-full h-32 border-2 border-dashed border-white/10 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden">Медиа (5с)</div>
+            <button onclick="uploadScript()" class="w-full bg-purple-600 py-4 rounded-xl font-bold">ОПУБЛИКОВАТЬ</button>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://morix.onrender.com"; // <--- ЗАМЕНИ ЭТО
-        let mediaBase64 = null;
-        let mediaType = null;
+        const API_URL = "ТВОЯ_ССЫЛКА_ОТ_RENDER"; 
+        let currentUser = null;
+        let isLoginMode = true;
+        let tempMedia = null;
 
-        // Анимация приветствия
-        window.onload = () => {
-            setTimeout(() => {
-                const intro = document.getElementById('intro');
-                intro.style.opacity = '0';
-                setTimeout(() => intro.style.visibility = 'hidden', 1000);
-            }, 2500);
-            loadPosts();
-        };
-
-        function toggleMenu(show) {
-            document.getElementById('sideMenu').classList.toggle('active', show);
-            document.querySelector('.overlay').classList.toggle('active', show);
+        function showScreen(id) {
+            ['botScreen', 'authScreen', 'mainScreen', 'viewScreen'].forEach(s => document.getElementById(s).classList.add('hidden-screen'));
+            document.getElementById(id).classList.remove('hidden-screen');
+            if(id === 'mainScreen') loadScripts();
         }
 
-        document.getElementById('fileInput').onchange = function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        function verifyBot() { showScreen('authScreen'); }
 
-            if (file.type.startsWith('video')) {
-                const video = document.createElement('video');
-                video.preload = 'metadata';
-                video.onloadedmetadata = () => {
-                    if (video.duration > 6) return alert("Видео > 5 сек!");
-                    saveFile(file);
-                };
-                video.src = URL.createObjectURL(file);
-            } else saveFile(file);
-        };
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('authTitle').innerText = isLoginMode ? "Вход в систему" : "Регистрация";
+            document.getElementById('authBtn').innerText = isLoginMode ? "ВОЙТИ" : "СОЗДАТЬ АККАУНТ";
+            document.getElementById('authToggle').innerText = isLoginMode ? "Нет аккаунта? Создать" : "Уже есть аккаунт? Войти";
+        }
 
-        function saveFile(file) {
+        async function handleAuth() {
+            const username = document.getElementById('authUser').value;
+            const password = document.getElementById('authPass').value;
+            const route = isLoginMode ? '/auth/login' : '/auth/register';
+
+            const res = await fetch(`${API_URL}${route}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            });
+            const data = await res.json();
+            if(data.success) {
+                if(isLoginMode) {
+                    currentUser = data.username;
+                    document.getElementById('userNameDisplay').innerText = currentUser;
+                    showScreen('mainScreen');
+                } else {
+                    alert("Успех! Теперь войдите");
+                    toggleAuthMode();
+                }
+            } else alert(data.error);
+        }
+
+        function previewFile(input) {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                mediaBase64 = e.target.result;
-                mediaType = file.type.startsWith('image') ? 'image' : 'video';
-                const p = document.getElementById('preview');
-                p.innerHTML = mediaType === 'image' 
-                    ? `<img src="${mediaBase64}" class="w-full h-full object-cover">`
-                    : `<video src="${mediaBase64}" muted autoplay loop class="w-full h-full object-cover"></video>`;
+            reader.onload = e => {
+                tempMedia = e.target.result;
+                const type = input.files[0].type.startsWith('image') ? 'image' : 'video';
+                document.getElementById('fPreview').innerHTML = type === 'image' 
+                    ? `<img src="${tempMedia}" class="h-full w-full object-cover">`
+                    : `<video src="${tempMedia}" muted autoplay loop class="h-full w-full object-cover"></video>`;
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(input.files[0]);
         }
 
-        async function submitPost() {
-            const title = document.getElementById('title').value;
-            const code = document.getElementById('code').value;
-            if(!title || !code) return alert("Заполни данные!");
-
-            const btn = document.getElementById('submitBtn');
-            btn.innerText = "Загрузка..."; btn.disabled = true;
-
+        async function uploadScript() {
+            const title = document.getElementById('sTitle').value;
+            const code = document.getElementById('sCode').value;
             await fetch(`${API_URL}/scripts`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({title, code, mediaData: mediaBase64, mediaType})
+                body: JSON.stringify({title, code, mediaData: tempMedia, mediaType: tempMedia?.includes('video') ? 'video':'image', author: currentUser})
             });
             location.reload();
         }
 
-        async function loadPosts(search = '') {
-            const res = await fetch(`${API_URL}/scripts?search=${search}`);
+        async function loadScripts() {
+            const res = await fetch(`${API_URL}/scripts?search=${document.getElementById('searchInput').value}`);
             const data = await res.json();
             const list = document.getElementById('scriptsList');
             list.innerHTML = '';
-
-            data.forEach((s, i) => {
-                let media = s.mediaData ? (s.mediaType === 'image' 
-                    ? `<img src="${s.mediaData}" class="w-full h-80 object-cover rounded-3xl mb-6 shadow-2xl">`
-                    : `<video src="${s.mediaData}" autoplay muted loop class="w-full h-80 object-cover rounded-3xl mb-6 shadow-2xl"></video>`) : '';
-
+            data.forEach(s => {
                 list.innerHTML += `
-                    <div class="glass p-8 rounded-[2.5rem] card-anim border-white/5">
-                        ${media}
-                        <h3 class="text-2xl font-extrabold mb-4">${s.title}</h3>
-                        <div class="relative group">
-                            <pre class="bg-black/40 p-6 rounded-2xl text-[11px] text-purple-300 font-mono mb-6 overflow-x-auto max-h-60 border border-white/5"><code>${s.code}</code></pre>
-                            <button onclick="copyCode(this, \`${s.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\` )" class="absolute top-4 right-4 bg-purple-600 p-2 rounded-xl opacity-0 group-hover:opacity-100 transition shadow-lg">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                            </button>
-                        </div>
-                        <div class="flex justify-between items-center text-xs text-gray-500 uppercase tracking-widest">
-                            <span>Morix Verified</span>
-                            <span>${s.date}</span>
+                    <div class="glass p-6 rounded-[2rem] mb-6 cursor-pointer" onclick="viewScript(${s.id})">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold">${s.title}</h3>
+                            <span class="text-[10px] text-purple-400">Автор: ${s.author}</span>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function copyCode(btn, text) {
-            navigator.clipboard.writeText(text);
-            btn.innerHTML = '✅'; setTimeout(() => btn.innerHTML = '📂', 2000);
+        async function viewScript(id) {
+            const res = await fetch(`${API_URL}/scripts?id=${id}`);
+            const s = await res.json();
+            showScreen('viewScreen');
+            document.getElementById('singleScriptContent').innerHTML = `
+                <div class="glass p-8 rounded-[3rem]">
+                    ${s.mediaData ? (s.mediaType==='video' ? `<video src="${s.mediaData}" autoplay muted loop class="w-full h-80 object-cover rounded-3xl mb-6">` : `<img src="${s.mediaData}" class="w-full h-80 object-cover rounded-3xl mb-6">`) : ''}
+                    <h1 class="text-3xl font-black mb-2">${s.title}</h1>
+                    <p class="text-purple-400 text-sm mb-6 uppercase tracking-widest">Автор: ${s.author}</p>
+                    <pre class="bg-black/60 p-6 rounded-2xl text-[11px] text-green-400 border border-white/5 overflow-x-auto mb-6"><code>${s.code}</code></pre>
+                    <button onclick="navigator.clipboard.writeText(\`${s.code}\`); alert('Скопировано!')" class="w-full bg-white text-black font-bold py-4 rounded-2xl">КОПИРОВАТЬ LUA</button>
+                    <p class="text-center mt-6 text-xs text-gray-500">Прямая ссылка: ${window.location.href.split('?')[0]}?id=${s.id}</p>
+                </div>
+            `;
         }
 
-        document.getElementById('searchInput').oninput = (e) => loadPosts(e.target.value);
+        // Автоматический переход по ссылке если есть id в URL
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            if(params.has('id')) viewScript(params.get('id'));
+        }
+        document.getElementById('searchInput').oninput = loadScripts;
     </script>
 </body>
 </html>
