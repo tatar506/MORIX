@@ -5,26 +5,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-let scripts = []; // Хранилище (очищается при перезагрузке Render)
+let scripts = []; 
 
-// Получение списка скриптов и поиск
+// ТЕСТОВАЯ СТРАНИЦА (Просто открой ссылку в браузере)
+app.get('/', (req, res) => {
+    res.send('MORIX API IS WORKING! ✅');
+});
+
 app.get('/scripts', (req, res) => {
     const search = req.query.search?.toLowerCase() || '';
     const filtered = scripts.filter(s => 
         s.title.toLowerCase().includes(search) || 
-        s.description.toLowerCase().includes(search) ||
+        (s.description && s.description.toLowerCase().includes(search)) ||
         s.code.toLowerCase().includes(search)
     );
     res.json(filtered);
 });
 
-// Публикация (теперь БЕЗ модерации)
 app.post('/scripts', (req, res) => {
     const { title, description, code } = req.body;
 
-    // Простая проверка: чтобы пост не был совсем пустым
     if (!title || !code) {
-        return res.status(400).json({ error: "Заполни название и вставь код!" });
+        return res.status(400).json({ error: "Title and Code are required!" });
     }
 
     const newScript = {
@@ -35,9 +37,11 @@ app.post('/scripts', (req, res) => {
         date: new Date().toLocaleDateString('ru-RU')
     };
 
-    scripts.unshift(newScript); // Добавляем в начало списка
+    scripts.unshift(newScript);
     res.json({ success: true });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`MORIX Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
+});
