@@ -3,89 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORIX SCRIPTS | Premium Hub</title>
+    <title>MORIX SCRIPTS | Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #a855f7; --bg: #06060a; }
         body { background: var(--bg); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
-        .glass { background: rgba(15, 15, 20, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .glass { background: rgba(15, 15, 20, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.05); }
         .hidden-screen { display: none !important; }
-        .btn-purple { background: linear-gradient(135deg, #a855f7, #6b21a8); transition: 0.3s; }
-        .btn-purple:hover { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); transform: scale(1.02); }
-        .fab { position: fixed; bottom: 30px; right: 30px; width: 64px; height: 64px; border-radius: 50%; z-index: 50; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .anim-card { animation: slideIn 0.4s ease-out; }
+        
+        /* Анимации */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .anim-up { animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: scale(1.02) translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 40px -10px rgba(168, 85, 247, 0.3); }
+
+        .btn-glow { transition: 0.3s; background: linear-gradient(135deg, #a855f7, #6b21a8); }
+        .btn-glow:hover { box-shadow: 0 0 25px rgba(168, 85, 247, 0.6); transform: scale(1.05); }
+        
+        #intro { position: fixed; inset: 0; z-index: 200; background: #000; display: flex; align-items: center; justify-content: center; }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 64px; height: 64px; border-radius: 50%; z-index: 50; display: flex; align-items: center; justify-content: center; cursor: pointer; animation: float 3s infinite ease-in-out; }
+        
+        pre::-webkit-scrollbar { width: 4px; height: 4px; }
+        pre::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- ПРИВЕТСТВИЕ -->
-    <div id="intro" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-all duration-1000">
-        <h1 class="text-6xl font-black tracking-tighter text-purple-600 animate-pulse">MORIX</h1>
-        <div class="mt-4 h-1 w-32 bg-white/10 rounded-full overflow-hidden">
-            <div class="h-full bg-purple-600 animate-[loading_2s_ease-in-out_infinite]"></div>
-        </div>
-        <style> @keyframes loading { 0% { width: 0%; } 50% { width: 100%; } 100% { width: 0%; } } </style>
-    </div>
-
-    <!-- Я НЕ РОБОТ -->
-    <div id="botScreen" class="hidden-screen fixed inset-0 z-[90] bg-[#06060a] flex items-center justify-center p-6 text-center">
-        <div class="glass p-10 rounded-[3rem] max-w-sm">
-            <h2 class="text-2xl font-bold mb-4">Проверка безопасности</h2>
-            <p class="text-gray-500 mb-8 text-sm">Подтвердите, что вы человек для доступа к скриптам</p>
-            <button onclick="confirmBot()" class="w-full btn-purple py-4 rounded-2xl font-bold">Я НЕ РОБОТ</button>
+    <!-- INTRO -->
+    <div id="intro">
+        <div class="text-center">
+            <h1 class="text-6xl font-black tracking-tighter text-white animate-pulse">MORIX</h1>
+            <div class="mt-4 text-purple-500 tracking-[0.5em] text-[10px] uppercase font-bold">Initializing Hub</div>
         </div>
     </div>
 
-    <!-- АВТОРИЗАЦИЯ -->
-    <div id="authScreen" class="hidden-screen fixed inset-0 z-[80] bg-[#06060a] flex items-center justify-center p-6">
-        <div class="glass p-10 rounded-[3rem] w-full max-w-md">
-            <h2 id="authTitle" class="text-3xl font-black mb-8">Вход</h2>
-            <input type="text" id="authUser" placeholder="Логин" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl mb-4 outline-none focus:border-purple-500">
-            <input type="password" id="authPass" placeholder="Пароль" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl mb-4 outline-none focus:border-purple-500">
-            <button onclick="handleAuth()" class="w-full btn-purple py-4 rounded-2xl font-bold">ПРОДОЛЖИТЬ</button>
-            <p onclick="toggleAuth()" id="authToggle" class="text-center text-xs text-gray-500 mt-6 cursor-pointer hover:text-white">Нет аккаунта? Создать</p>
+    <!-- BOT CHECK -->
+    <div id="botScreen" class="hidden-screen fixed inset-0 z-50 bg-[#06060a] flex items-center justify-center p-6">
+        <div class="glass p-12 rounded-[3rem] text-center max-w-sm anim-up">
+            <h2 class="text-3xl font-bold mb-4">Verify Identity</h2>
+            <p class="text-gray-500 mb-8">Prove you are a human to enter the Morix Ecosystem</p>
+            <button onclick="confirmBot()" class="w-full btn-glow py-4 rounded-2xl font-bold uppercase tracking-widest">Verify</button>
         </div>
     </div>
 
-    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <!-- AUTH -->
+    <div id="authScreen" class="hidden-screen fixed inset-0 z-40 bg-[#06060a] flex items-center justify-center p-6">
+        <div class="glass p-10 rounded-[3rem] w-full max-w-md anim-up">
+            <h2 id="authTitle" class="text-3xl font-black mb-8">Welcome</h2>
+            <div class="space-y-4">
+                <input type="text" id="authUser" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-all">
+                <input type="password" id="authPass" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-all">
+                <button onclick="handleAuth()" id="authBtn" class="w-full btn-glow py-4 rounded-2xl font-bold shadow-lg">Login</button>
+                <p onclick="toggleAuth()" id="authToggle" class="text-center text-xs text-gray-500 cursor-pointer hover:text-white transition">New here? Create account</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HUB -->
     <div id="mainScreen" class="hidden-screen min-h-screen">
-        <nav class="glass sticky top-0 z-40 px-6 py-5 flex justify-between items-center">
-            <span class="font-black text-xl tracking-tighter italic">MORIX <span class="text-purple-500 font-normal">SCRIPTS</span></span>
-            <div class="flex items-center gap-4">
-                <input type="text" id="searchInput" oninput="loadScripts()" placeholder="Поиск..." class="bg-white/5 border border-white/10 px-6 py-2 rounded-full text-xs outline-none focus:w-64 transition-all">
-                <div id="admTag" class="hidden bg-red-600 px-2 py-1 rounded text-[10px] font-bold">ADMIN</div>
+        <nav class="glass sticky top-0 z-30 px-8 py-5 flex justify-between items-center border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center font-black shadow-lg">M</div>
+                <h1 class="text-2xl font-black tracking-tighter uppercase italic">MORIX <span class="text-purple-500 font-normal">SCRIPTS</span></h1>
+            </div>
+            <div class="flex items-center gap-6">
+                <input type="text" id="searchInput" oninput="loadScripts()" placeholder="Search scripts..." class="bg-white/5 border border-white/10 px-6 py-2 rounded-full text-xs outline-none focus:w-64 focus:border-purple-500 transition-all">
+                <div id="adminPanelBtn" class="hidden text-red-500 text-[10px] font-bold border border-red-500/30 px-3 py-1 rounded-full cursor-pointer hover:bg-red-500/10 uppercase tracking-widest">Admin Dashboard</div>
             </div>
         </nav>
-        <main id="scriptsList" class="max-w-4xl mx-auto p-6 space-y-8 pb-32"></main>
-        <div class="fab btn-purple" onclick="toggleMenu(true)"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M12 4v16m8-8H4"></path></svg></div>
+
+        <main id="scriptsList" class="max-w-4xl mx-auto p-6 space-y-10 pb-40"></main>
+
+        <div class="fab btn-glow" onclick="toggleMenu(true)">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+        </div>
     </div>
 
-    <!-- SIDE MENU -->
-    <div id="sideMenu" class="fixed top-0 right-[-100%] w-full max-w-md h-full glass z-[60] transition-all duration-500 p-10">
-        <div class="flex justify-between items-center mb-10"><h2 class="text-2xl font-bold">Опубликовать</h2><button onclick="toggleMenu(false)">❌</button></div>
-        <div class="space-y-4">
-            <input type="text" id="sTitle" placeholder="Название" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none">
-            <textarea id="sCode" placeholder="Lua code..." class="w-full h-48 bg-white/5 border border-white/10 p-4 rounded-2xl outline-none font-mono text-xs"></textarea>
-            <div onclick="document.getElementById('fInput').click()" id="fPreview" class="w-full h-40 border-2 border-dashed border-white/10 rounded-2xl flex items-center justify-center cursor-pointer overflow-hidden text-gray-500">Медиа (5с)</div>
+    <!-- SHARE TOAST -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass px-8 py-3 rounded-full text-sm font-bold border-purple-500 border opacity-0 transition-all pointer-events-none z-[100]">Link Copied!</div>
+
+    <!-- PUBLISH SIDEBAR -->
+    <div id="sideMenu" class="fixed top-0 right-[-100%] w-full max-w-md h-full glass z-[60] transition-all duration-700 p-10 shadow-2xl">
+        <div class="flex justify-between items-center mb-12">
+            <h2 class="text-2xl font-black">Publish Lua</h2>
+            <button onclick="toggleMenu(false)" class="text-gray-500 hover:text-white transition">Close</button>
+        </div>
+        <div class="space-y-6">
+            <input type="text" id="sTitle" placeholder="Script Title" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500">
+            <textarea id="sCode" placeholder="Paste Lua Code Here..." class="w-full h-56 bg-white/5 border border-white/10 p-4 rounded-2xl outline-none font-mono text-xs focus:border-purple-500"></textarea>
+            <div onclick="document.getElementById('fInput').click()" id="fPreview" class="w-full h-44 border-2 border-dashed border-white/10 rounded-3xl flex items-center justify-center cursor-pointer overflow-hidden text-gray-500 hover:border-purple-500 transition">Attach Media (Image/Video 5s)</div>
             <input type="file" id="fInput" class="hidden" onchange="handleFile(this)">
-            <button onclick="uploadScript()" class="w-full btn-purple py-5 rounded-2xl font-bold text-lg">ЗАЛИТЬ</button>
+            <button onclick="uploadScript()" class="w-full btn-glow py-5 rounded-2xl font-bold text-lg shadow-xl shadow-purple-500/20">UPLOAD TO HUB</button>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://morix.onrender.com"; // ЗАМЕНИ НА СВОЙ URL
-        let currentUser = null, isAdmin = false, aPass = "", isLogin = true, tempMedia = null;
+        const API_URL = "https://morix.onrender.com"; 
+        let currentUser = null, isAdmin = false, adminPass = "", isLogin = true, tempMedia = null;
 
         // Intro Logic
-        setTimeout(() => {
-            document.getElementById('intro').style.opacity = '0';
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                document.getElementById('intro').classList.add('hidden-screen');
-                document.getElementById('botScreen').classList.remove('hidden-screen');
-            }, 1000);
-        }, 2500);
+                document.getElementById('intro').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('intro').classList.add('hidden-screen');
+                    document.getElementById('botScreen').classList.remove('hidden-screen');
+                }, 1000);
+            }, 2500);
+
+            // Check if URL has script ID
+            const params = new URLSearchParams(window.location.search);
+            if(params.has('s')) {
+                // Logic to view specific script could go here
+            }
+        });
 
         function confirmBot() {
             document.getElementById('botScreen').classList.add('hidden-screen');
@@ -94,8 +127,9 @@
 
         function toggleAuth() {
             isLogin = !isLogin;
-            document.getElementById('authTitle').innerText = isLogin ? "Вход" : "Регистрация";
-            document.getElementById('authToggle').innerText = isLogin ? "Нет аккаунта? Создать" : "Есть аккаунт? Войти";
+            document.getElementById('authTitle').innerText = isLogin ? "Welcome Back" : "Create Account";
+            document.getElementById('authBtn').innerText = isLogin ? "Login" : "Sign Up";
+            document.getElementById('authToggle').innerText = isLogin ? "New here? Create account" : "Have account? Login";
         }
 
         async function handleAuth() {
@@ -103,42 +137,56 @@
             const password = document.getElementById('authPass').value;
             const route = isLogin ? '/auth/login' : '/auth/register';
 
-            const res = await fetch(`${API_URL}${route}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username, password})
-            });
-            const data = await res.json();
-            if(data.success) {
-                if(isLogin) {
-                    currentUser = data.username;
-                    if(data.role === 'admin') {
-                        isAdmin = true; aPass = password;
-                        document.getElementById('admTag').classList.remove('hidden');
+            if(!username || !password) return alert("Fill all fields!");
+
+            try {
+                const res = await fetch(`${API_URL}${route}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+                const data = await res.json();
+
+                if(data.success) {
+                    if(isLogin) {
+                        currentUser = data.username;
+                        if(data.role === 'admin') {
+                            isAdmin = true; adminPass = password;
+                            document.getElementById('adminPanelBtn').classList.remove('hidden');
+                        }
+                        document.getElementById('authScreen').classList.add('hidden-screen');
+                        document.getElementById('mainScreen').classList.remove('hidden-screen');
+                        loadScripts();
+                    } else {
+                        alert("Account created! Now login.");
+                        toggleAuth();
                     }
-                    document.getElementById('authScreen').classList.add('hidden-screen');
-                    document.getElementById('mainScreen').classList.remove('hidden-screen');
-                    loadScripts();
-                } else { alert("Аккаунт создан!"); toggleAuth(); }
-            } else alert(data.error);
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (e) {
+                alert("Server is offline or waking up. Please wait 30 seconds.");
+            }
         }
 
         function handleFile(input) {
+            const file = input.files[0];
             const reader = new FileReader();
             reader.onload = e => {
                 tempMedia = e.target.result;
-                const isVid = input.files[0].type.includes('video');
+                const isVid = file.type.includes('video');
                 document.getElementById('fPreview').innerHTML = isVid 
                     ? `<video src="${tempMedia}" muted autoplay loop class="w-full h-full object-cover">`
                     : `<img src="${tempMedia}" class="w-full h-full object-cover">`;
             };
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(file);
         }
 
         async function uploadScript() {
             const title = document.getElementById('sTitle').value;
             const code = document.getElementById('sCode').value;
-            if(!title || !code) return alert("Заполни поля!");
+            if(!title || !code) return alert("Fill fields!");
+
             await fetch(`${API_URL}/scripts`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -148,44 +196,78 @@
         }
 
         async function loadScripts() {
-            const res = await fetch(`${API_URL}/scripts?search=${document.getElementById('searchInput').value}`);
+            const search = document.getElementById('searchInput').value;
+            const res = await fetch(`${API_URL}/scripts?search=${search}`);
             const data = await res.json();
             const list = document.getElementById('scriptsList');
             list.innerHTML = '';
-            data.forEach(s => {
-                let media = s.mediaData ? (s.mediaType==='video' ? `<video src="${s.mediaData}" autoplay muted loop class="w-full h-72 object-cover rounded-3xl mb-6 shadow-xl">` : `<img src="${s.mediaData}" class="w-full h-72 object-cover rounded-3xl mb-6 shadow-xl">`) : '';
-                let adminUI = isAdmin ? `<div class="mt-4 flex gap-2 border-t border-white/5 pt-4">
-                    <button onclick="admAct('delete', ${s.id})" class="text-[10px] text-red-500 bg-red-500/10 px-3 py-1 rounded">Удалить</button>
-                    <button onclick="admAct('ban', 0, '${s.ip}')" class="text-[10px] text-orange-500 bg-orange-500/10 px-3 py-1 rounded">Бан IP</button>
-                    <button onclick="admAct('verify', 0, '', '${s.author}')" class="text-[10px] text-blue-500 bg-blue-500/10 px-3 py-1 rounded">Галочка</button>
+
+            data.forEach((s, i) => {
+                let media = s.mediaData ? (s.mediaType==='video' ? `<video src="${s.mediaData}" autoplay muted loop class="w-full h-80 object-cover rounded-[2.5rem] mb-6 shadow-2xl">` : `<img src="${s.mediaData}" class="w-full h-80 object-cover rounded-[2.5rem] mb-6 shadow-2xl">`) : '';
+                
+                let adminButtons = isAdmin ? `<div class="mt-6 flex gap-3 border-t border-white/5 pt-6">
+                    <button onclick="admAct('delete', ${s.id})" class="text-[10px] bg-red-500/10 text-red-500 px-4 py-2 rounded-xl font-bold uppercase">Delete</button>
+                    <button onclick="admAct('ban', 0, '${s.ip}')" class="text-[10px] bg-orange-500/10 text-orange-500 px-4 py-2 rounded-xl font-bold uppercase">Ban IP</button>
+                    <button onclick="admAct('verify', 0, '', '${s.author}')" class="text-[10px] bg-blue-500/10 text-blue-500 px-4 py-2 rounded-xl font-bold uppercase">Give Badge</button>
                 </div>` : '';
 
-                list.innerHTML += `<div class="glass p-8 rounded-[2.5rem] anim-card">
+                const card = document.createElement('div');
+                card.className = "glass p-8 rounded-[3rem] card-hover anim-up";
+                card.style.animationDelay = `${i * 0.1}s`;
+                card.innerHTML = `
                     ${media}
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-2xl font-bold">${s.title} ${s.isVerified ? ' <span class="text-blue-500">✔</span>':''}</h3>
-                        <span class="text-[10px] text-gray-600 font-bold tracking-widest uppercase">${s.date}</span>
+                        <h3 class="text-3xl font-black tracking-tight">${s.title} ${s.isVerified ? '<span class="text-blue-500 text-xl ml-2">✔</span>' : ''}</h3>
+                        <span class="text-[10px] text-gray-600 font-black uppercase tracking-[0.2em]">${s.date}</span>
                     </div>
-                    <p class="text-purple-400 text-[10px] font-bold uppercase mb-4 tracking-tighter">Author: ${s.author}</p>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-6 h-6 bg-purple-600/20 rounded-full flex items-center justify-center text-[10px] font-bold text-purple-400">@</div>
+                        <p class="text-gray-400 text-xs font-bold uppercase tracking-widest">${s.author}</p>
+                    </div>
                     <div class="relative group">
-                        <pre class="bg-black/40 p-5 rounded-2xl text-[11px] text-purple-300 font-mono overflow-x-auto max-h-48 border border-white/5"><code>${s.code}</code></pre>
-                        <button onclick="navigator.clipboard.writeText(\`${s.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`); alert('Copied!')" class="absolute top-3 right-3 bg-purple-600 p-2 rounded-xl opacity-0 group-hover:opacity-100 transition">Copy</button>
+                        <pre class="bg-black/60 p-6 rounded-3xl text-[11px] text-purple-300 font-mono overflow-x-auto max-h-60 border border-white/5"><code>${s.code}</code></pre>
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            <button onclick="copyToClipboard(\`${s.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, 'Code')" class="bg-purple-600 p-3 rounded-2xl opacity-0 group-hover:opacity-100 transition shadow-xl hover:scale-110 active:scale-95">Copy Lua</button>
+                            <button onclick="shareScript(${s.id})" class="bg-white/10 p-3 rounded-2xl opacity-0 group-hover:opacity-100 transition shadow-xl hover:scale-110 backdrop-blur">Share</button>
+                        </div>
                     </div>
-                    ${adminUI}
-                </div>`;
+                    ${adminButtons}
+                `;
+                list.appendChild(card);
             });
         }
 
         async function admAct(action, targetId, targetIP='', targetAuthor='') {
-            await fetch(`${API_URL}/admin/action`, {
+            const res = await fetch(`${API_URL}/admin/action`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({adminPass: aPass, action, targetId, targetIP, targetAuthor})
+                body: JSON.stringify({adminPass, action, targetId, targetIP, targetAuthor})
             });
             loadScripts();
         }
 
-        function toggleMenu(s) { document.getElementById('sideMenu').style.right = s ? '0' : '-100%'; }
+        function copyToClipboard(text, type) {
+            navigator.clipboard.writeText(text);
+            showToast(type + " Copied!");
+        }
+
+        function shareScript(id) {
+            const link = window.location.origin + window.location.pathname + "?s=" + id;
+            navigator.clipboard.writeText(link);
+            showToast("Share Link Copied!");
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            t.style.bottom = '40px';
+            setTimeout(() => { t.style.opacity = '0'; t.style.bottom = '10px'; }, 3000);
+        }
+
+        function toggleMenu(s) {
+            document.getElementById('sideMenu').style.right = s ? '0' : '-100%';
+        }
     </script>
 </body>
 </html>
