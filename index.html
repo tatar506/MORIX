@@ -3,78 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORIX SCRIPTS | Global Hub</title>
+    <title>MORIX SCRIPTS | Final</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #a855f7; --bg: #06060a; }
-        body { background: var(--bg); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        body { background: var(--bg); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; margin: 0; }
         
         /* Экраны */
-        .screen { display: none; min-height: 100vh; }
-        .screen.active { display: block; }
+        .screen { display: none; min-height: 100vh; width: 100%; position: relative; z-index: 10; }
+        .screen.active { display: flex; flex-direction: column; }
 
         /* Дизайн */
         .glass { background: rgba(15, 15, 20, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
-        .btn-purple { background: linear-gradient(135deg, #a855f7, #6b21a8); transition: 0.3s; cursor: pointer; }
-        .btn-purple:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+        .btn-purple { background: linear-gradient(135deg, #a855f7, #6b21a8); transition: 0.3s; cursor: pointer; border: none; }
+        .btn-purple:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
         
         /* Анимации */
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .anim-up { animation: fadeInUp 0.5s ease-out forwards; }
 
-        /* Плавающая кнопка */
-        .fab { position: fixed; bottom: 30px; right: 30px; width: 64px; height: 64px; border-radius: 50%; z-index: 50; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(168, 85, 247, 0.3); }
-
+        /* Интро */
+        #introScreen { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; transition: opacity 1s; }
+        
         /* Админка */
-        #adminPanel { position: fixed; inset: 0; z-index: 1000; background: #000; display: none; padding: 40px; overflow-y: auto; }
-        #adminPanel.active { display: block; }
-        .fn-btn { background: #1a1a24; padding: 12px; border-radius: 12px; font-size: 11px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
-        .fn-btn:hover { background: var(--accent); border-color: white; }
+        #adminPanel { position: fixed; inset: 0; z-index: 5000; background: #000; display: none; padding: 40px; overflow-y: auto; }
+        .fn-btn { background: #1a1a24; padding: 12px; border-radius: 12px; font-size: 11px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
+        .fn-btn:hover { background: var(--accent); color: white; }
     </style>
 </head>
 <body>
 
-    <!-- 1. INTRO (ПРИВЕТСТВИЕ) -->
-    <div id="introScreen" class="fixed inset-0 z-[2000] bg-black flex items-center justify-center transition-opacity duration-1000">
+    <!-- 1. ИНТРО (Приветствие) -->
+    <div id="introScreen">
         <div class="text-center">
             <h1 class="text-7xl font-black italic tracking-tighter text-white animate-pulse">MORIX</h1>
-            <p class="text-purple-500 tracking-[0.6em] text-[10px] mt-4 uppercase font-bold">Initializing...</p>
+            <p class="text-purple-500 tracking-[0.6em] text-[10px] mt-4 uppercase font-bold">System Loading</p>
         </div>
     </div>
 
-    <!-- 2. BOT CHECK (Я НЕ РОБОТ) -->
-    <div id="botScreen" class="screen flex items-center justify-center p-6 text-center">
-        <div class="glass p-12 rounded-[3.5rem] max-w-sm anim-up">
+    <!-- 2. ЭКРАН ПРОВЕРКИ (Я НЕ РОБОТ) -->
+    <div id="botScreen" class="screen items-center justify-center p-6 text-center">
+        <div class="glass p-12 rounded-[3.5rem] max-w-sm w-full anim-up shadow-2xl">
+            <div class="w-20 h-20 bg-purple-600/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-1.332 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            </div>
             <h2 class="text-3xl font-extrabold mb-4">Безопасность</h2>
-            <p class="text-gray-500 mb-10">Подтвердите, что вы человек, чтобы войти в MORIX</p>
-            <button onclick="verifyBot()" class="w-full btn-purple py-4 rounded-2xl font-bold uppercase tracking-widest">Я НЕ РОБОТ</button>
+            <p class="text-gray-500 mb-10 text-sm">Нажмите кнопку ниже, чтобы подтвердить, что вы человек.</p>
+            <button onclick="confirmBot()" class="w-full btn-purple py-4 rounded-2xl font-bold uppercase tracking-widest text-white shadow-lg">Я НЕ РОБОТ</button>
         </div>
     </div>
 
-    <!-- 3. AUTH (ВХОД / РЕГИСТРАЦИЯ) -->
-    <div id="authScreen" class="screen flex items-center justify-center p-6">
-        <div class="glass p-10 rounded-[3rem] w-full max-w-md anim-up">
-            <h2 id="authTitle" class="text-3xl font-black mb-8">Вход</h2>
+    <!-- 3. ЭКРАН ВХОДА -->
+    <div id="authScreen" class="screen items-center justify-center p-6">
+        <div class="glass p-10 rounded-[3rem] w-full max-w-md anim-up shadow-2xl">
+            <h2 id="authTitle" class="text-3xl font-black mb-8 text-center">Вход</h2>
             <div class="space-y-4">
-                <input type="text" id="authUser" placeholder="Логин" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-all">
-                <input type="password" id="authPass" placeholder="Пароль" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-all">
-                <button onclick="handleAuth()" id="authBtn" class="w-full btn-purple py-4 rounded-2xl font-bold mt-4 shadow-lg">ВОЙТИ</button>
+                <input type="text" id="authUser" placeholder="Логин" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-all text-sm">
+                <input type="password" id="authPass" placeholder="Пароль" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-all text-sm">
+                <button onclick="handleAuth()" class="w-full btn-purple py-4 rounded-2xl font-bold mt-4 shadow-xl text-white">ПРОДОЛЖИТЬ</button>
                 <p onclick="toggleAuth()" id="authToggle" class="text-center text-xs text-gray-500 mt-6 cursor-pointer hover:text-white transition">Нет аккаунта? Создать</p>
             </div>
         </div>
     </div>
 
-    <!-- 4. MAIN HUB (ОСНОВНОЙ САЙТ) -->
+    <!-- 4. ГЛАВНЫЙ ХАБ -->
     <div id="mainScreen" class="screen">
-        <nav class="glass sticky top-0 z-40 px-8 py-5 flex justify-between items-center">
+        <nav class="glass sticky top-0 z-50 px-8 py-5 flex justify-between items-center border-b border-white/5">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 bg-purple-600 rounded-xl flex items-center justify-center font-black">M</div>
                 <h1 class="text-2xl font-black tracking-tighter uppercase italic">MORIX <span class="text-purple-500 font-normal">SCRIPTS</span></h1>
             </div>
             <div class="flex items-center gap-4">
                 <input type="text" id="searchInput" oninput="loadScripts()" placeholder="Поиск..." class="bg-white/5 border border-white/10 px-6 py-2 rounded-full text-xs outline-none focus:w-64 transition-all">
-                <div id="adminBtn" onclick="toggleAdmin(true)" class="hidden bg-red-600 px-4 py-2 rounded-full text-[10px] font-bold cursor-pointer hover:bg-red-700 transition uppercase tracking-widest">Admin Center</div>
+                <div id="adminBtn" onclick="toggleAdmin(true)" class="hidden bg-red-600 px-4 py-2 rounded-full text-[10px] font-bold cursor-pointer hover:bg-red-700 transition uppercase">Admin Center</div>
             </div>
         </nav>
 
@@ -82,78 +84,83 @@
 
         <main id="scriptsList" class="max-w-4xl mx-auto p-6 space-y-10 pb-40"></main>
 
-        <div class="fab btn-purple" onclick="togglePublishMenu(true)">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+        <!-- ПЛАВАЮЩАЯ КНОПКА + -->
+        <div onclick="togglePublishMenu(true)" class="fixed bottom-8 right-8 w-16 h-16 btn-purple rounded-full flex items-center justify-center z-50 shadow-2xl cursor-pointer">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
         </div>
     </div>
 
-    <!-- SIDE MENU: PUBLISH -->
-    <div id="publishMenu" class="fixed top-0 right-[-100%] w-full max-w-md h-full glass z-[100] transition-all duration-500 p-10">
-        <div class="flex justify-between items-center mb-10"><h2 class="text-2xl font-bold">Опубликовать</h2><button onclick="togglePublishMenu(false)">❌</button></div>
+    <!-- БОКОВОЕ МЕНЮ ПУБЛИКАЦИИ -->
+    <div id="publishMenu" class="fixed top-0 right-[-100%] w-full max-w-md h-full glass z-[100] transition-all duration-500 p-10 shadow-2xl">
+        <div class="flex justify-between items-center mb-10"><h2 class="text-2xl font-bold">Опубликовать</h2><button onclick="togglePublishMenu(false)" class="text-gray-500">❌</button></div>
         <div class="space-y-4">
             <input type="text" id="sTitle" placeholder="Название скрипта" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500">
-            <textarea id="sCode" placeholder="Вставь Lua код..." class="w-full h-56 bg-white/5 border border-white/10 p-4 rounded-2xl outline-none font-mono text-xs"></textarea>
-            <div onclick="document.getElementById('fInput').click()" id="fPreview" class="w-full h-40 border-2 border-dashed border-white/10 rounded-3xl flex items-center justify-center cursor-pointer overflow-hidden text-gray-500">Прикрепить Медиа (5с)</div>
+            <textarea id="sCode" placeholder="Paste Lua code here..." class="w-full h-56 bg-white/5 border border-white/10 p-4 rounded-2xl outline-none font-mono text-xs"></textarea>
+            <div onclick="document.getElementById('fInput').click()" id="fPreview" class="w-full h-40 border-2 border-dashed border-white/10 rounded-3xl flex items-center justify-center cursor-pointer overflow-hidden text-gray-500 text-xs">Медиа (5с)</div>
             <input type="file" id="fInput" class="hidden" onchange="previewMedia(this)">
-            <button onclick="uploadScript()" class="w-full btn-purple py-5 rounded-2xl font-bold text-lg shadow-xl">ЗАЛИТЬ</button>
+            <button onclick="uploadScript()" class="w-full btn-purple py-5 rounded-2xl font-bold text-lg text-white">ЗАЛИТЬ</button>
         </div>
     </div>
 
-    <!-- ADMIN PANEL -->
+    <!-- АДМИН ПАНЕЛЬ -->
     <div id="adminPanel">
         <div class="max-w-6xl mx-auto py-10">
             <div class="flex justify-between items-center mb-10">
                 <h2 class="text-4xl font-black">MASTER ADMIN</h2>
-                <button onclick="toggleAdmin(false)" class="bg-white/10 px-6 py-2 rounded-xl text-xs">ВЕРНУТЬСЯ</button>
+                <button onclick="toggleAdmin(false)" class="bg-white/10 px-6 py-2 rounded-xl text-xs uppercase">Закрыть</button>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="adminFunctions">
+                <!-- Кнопки админки -->
                 <div onclick="adm('get_users_list')" class="fn-btn">Список пользователей</div>
-                <div onclick="promptAdm('get_ip', 'Введите ник')" class="fn-btn">Узнать IP юзера</div>
-                <div onclick="promptAdm('ban_ip', 'Введите IP')" class="fn-btn text-red-500">Забанить IP</div>
-                <div onclick="promptAdm('unban_ip', 'Введите IP')" class="fn-btn">Разбанить IP</div>
-                <div onclick="promptAdm('verify_user', 'Введите ник')" class="fn-btn text-blue-400">Выдать Галочку</div>
+                <div onclick="promptAdm('get_ip', 'Ник юзера')" class="fn-btn">Узнать IP</div>
+                <div onclick="promptAdm('ban_ip', 'IP адрес')" class="fn-btn text-red-500">Забанить IP</div>
+                <div onclick="promptAdm('unban_ip', 'IP адрес')" class="fn-btn">Разбанить IP</div>
+                <div onclick="promptAdm('verify_user', 'Ник юзера')" class="fn-btn text-blue-400">Выдать Галочку</div>
                 <div onclick="adm('set_maintenance', true)" class="fn-btn">Включить Тех.Работы</div>
                 <div onclick="adm('set_maintenance', false)" class="fn-btn">Выключить Тех.Работы</div>
-                <div onclick="promptAdm('set_notify', 'Текст сообщения')" class="fn-btn">Глобальное уведомление</div>
+                <div onclick="promptAdm('set_notify', 'Текст')" class="fn-btn">Глобальное уведомление</div>
                 <div onclick="adm('clear_scripts')" class="fn-btn text-red-600">Очистить ленту</div>
-                <div onclick="location.reload()" class="fn-btn font-bold">REBOOT SYSTEM</div>
+                <div onclick="location.reload()" class="fn-btn font-bold">Перезапуск</div>
             </div>
-            <div id="adminConsole" class="mt-10 p-6 bg-zinc-900 rounded-3xl font-mono text-[10px] text-green-500 h-64 overflow-y-auto shadow-inner">
+            <div id="adminConsole" class="mt-10 p-6 bg-zinc-900 rounded-3xl font-mono text-[10px] text-green-500 h-64 overflow-y-auto">
                 > System ready...
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://morix.onrender.com"; // ЗАМЕНИ НА СВОЙ!
+        const API_URL = "https://morix.onrender.com"; // ЗАМЕНИ НА СВОЙ URL!
         let currentUser = null, isAdmin = false, aPass = "", isLogin = true, tempMedia = null;
 
         // Показ экранов
         function showScreen(id) {
+            console.log("Переключение на экран:", id);
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(id === 'mainScreen') loadScripts();
+            const target = document.getElementById(id);
+            if (target) target.classList.add('active');
         }
 
-        // 1. Приветствие
+        // Интро
         window.onload = () => {
             setTimeout(() => {
-                document.getElementById('introScreen').style.opacity = '0';
+                const intro = document.getElementById('introScreen');
+                intro.style.opacity = '0';
                 setTimeout(() => {
-                    document.getElementById('introScreen').style.display = 'none';
+                    intro.style.display = 'none';
                     showScreen('botScreen');
                 }, 1000);
             }, 2500);
         };
 
-        // 2. Проверка бота
-        function verifyBot() { showScreen('authScreen'); }
+        // Функция кнопки "Я не робот"
+        function confirmBot() {
+            console.log("Кнопка 'Я не робот' нажата");
+            showScreen('authScreen');
+        }
 
-        // 3. Авторизация
         function toggleAuth() {
             isLogin = !isLogin;
             document.getElementById('authTitle').innerText = isLogin ? "Вход" : "Регистрация";
-            document.getElementById('authBtn').innerText = isLogin ? "ВОЙТИ" : "СОЗДАТЬ";
             document.getElementById('authToggle').innerText = isLogin ? "Нет аккаунта? Создать" : "Есть аккаунт? Войти";
         }
 
@@ -162,67 +169,75 @@
             const password = document.getElementById('authPass').value;
             const route = isLogin ? '/auth/login' : '/auth/register';
 
-            const res = await fetch(`${API_URL}${route}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username, password})
-            });
-            const data = await res.json();
+            if(!username || !password) return alert("Заполни поля!");
 
-            if(data.success) {
-                if(isLogin) {
-                    currentUser = data.username;
-                    if(data.role === 'admin') {
-                        isAdmin = true; aPass = password;
-                        document.getElementById('adminBtn').classList.remove('hidden');
+            try {
+                const res = await fetch(`${API_URL}${route}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+                const data = await res.json();
+
+                if(data.success) {
+                    if(isLogin) {
+                        currentUser = data.username;
+                        if(data.role === 'admin') {
+                            isAdmin = true; aPass = password;
+                            document.getElementById('adminBtn').classList.remove('hidden');
+                        }
+                        showScreen('mainScreen');
+                        loadScripts();
+                    } else {
+                        alert("Регистрация успешна! Теперь войдите.");
+                        toggleAuth();
                     }
-                    showScreen('mainScreen');
-                } else {
-                    alert("Успех! Теперь войдите");
-                    toggleAuth();
-                }
-            } else alert(data.error);
-        }
-
-        // 4. Скрипты
-        async function loadScripts() {
-            const s = document.getElementById('searchInput').value;
-            const res = await fetch(`${API_URL}/scripts?search=${s}`);
-            const data = await res.json();
-            
-            // Глобальное сообщение
-            if(data.config.globalNotification) {
-                const g = document.getElementById('globalMsg');
-                g.innerText = data.config.globalNotification;
-                g.classList.remove('hidden');
+                } else alert(data.error);
+            } catch(e) {
+                alert("Ошибка сервера. Убедитесь, что Render запущен.");
             }
-
-            const list = document.getElementById('scriptsList');
-            list.innerHTML = '';
-            data.scripts.forEach(script => {
-                let media = script.mediaData ? (script.mediaType === 'video' 
-                    ? `<video src="${script.mediaData}" autoplay muted loop class="w-full h-80 object-cover rounded-[2.5rem] mb-6 shadow-2xl">` 
-                    : `<img src="${script.mediaData}" class="w-full h-80 object-cover rounded-[2.5rem] mb-6 shadow-2xl">`) : '';
-
-                list.innerHTML += `
-                    <div class="glass p-8 rounded-[3rem] anim-up border-white/5">
-                        ${media}
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-2xl font-black">${script.title} ${script.isVerified ? '<span class="text-blue-500">✔</span>':''}</h3>
-                            <span class="text-[10px] text-gray-600 font-bold tracking-widest uppercase">${script.date}</span>
-                        </div>
-                        <p class="text-purple-400 text-[10px] font-bold uppercase mb-6 tracking-tighter">By @${script.author}</p>
-                        <div class="relative group">
-                            <pre class="bg-black/40 p-6 rounded-2xl text-[11px] text-purple-300 font-mono overflow-x-auto max-h-60 border border-white/5"><code>${script.code}</code></pre>
-                            <button onclick="navigator.clipboard.writeText(\`${script.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`); alert('Copied!')" class="absolute top-4 right-4 bg-purple-600 p-2 rounded-xl opacity-0 group-hover:opacity-100 transition shadow-lg">Copy</button>
-                        </div>
-                    </div>
-                `;
-            });
         }
 
-        // 5. Публикация
+        async function loadScripts() {
+            const search = document.getElementById('searchInput').value;
+            try {
+                const res = await fetch(`${API_URL}/scripts?search=${search}`);
+                const data = await res.json();
+                
+                const list = document.getElementById('scriptsList');
+                list.innerHTML = '';
+
+                if(data.config && data.config.globalNotification) {
+                    const g = document.getElementById('globalMsg');
+                    g.innerText = data.config.globalNotification;
+                    g.classList.remove('hidden');
+                }
+
+                data.scripts.forEach(script => {
+                    let media = script.mediaData ? (script.mediaType === 'video' 
+                        ? `<video src="${script.mediaData}" autoplay muted loop class="w-full h-80 object-cover rounded-[2.5rem] mb-6 shadow-2xl">` 
+                        : `<img src="${script.mediaData}" class="w-full h-80 object-cover rounded-[2.5rem] mb-6 shadow-2xl">`) : '';
+
+                    list.innerHTML += `
+                        <div class="glass p-8 rounded-[3rem] anim-up border-white/5">
+                            ${media}
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-2xl font-black">${script.title} ${script.isVerified ? '<span class="text-blue-500">✔</span>':''}</h3>
+                                <span class="text-[10px] text-gray-600 font-bold tracking-widest uppercase">${script.date}</span>
+                            </div>
+                            <p class="text-purple-400 text-[10px] font-bold uppercase mb-6 tracking-tighter">By @${script.author}</p>
+                            <div class="relative group">
+                                <pre class="bg-black/40 p-6 rounded-2xl text-[11px] text-purple-300 font-mono overflow-x-auto max-h-60 border border-white/5"><code>${script.code}</code></pre>
+                                <button onclick="navigator.clipboard.writeText(\`${script.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`); alert('Copied!')" class="absolute top-4 right-4 bg-purple-600 p-2 rounded-xl opacity-0 group-hover:opacity-100 transition shadow-lg text-white text-[10px] px-3">Copy</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch(e) { console.error("Load scripts error:", e); }
+        }
+
         function togglePublishMenu(s) { document.getElementById('publishMenu').style.right = s ? '0' : '-100%'; }
+
         function previewMedia(input) {
             const reader = new FileReader();
             reader.onload = e => {
@@ -232,9 +247,11 @@
             };
             reader.readAsDataURL(input.files[0]);
         }
+
         async function uploadScript() {
             const title = document.getElementById('sTitle').value;
             const code = document.getElementById('sCode').value;
+            if(!title || !code) return alert("Заполни данные!");
             await fetch(`${API_URL}/scripts`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -243,7 +260,7 @@
             location.reload();
         }
 
-        // 6. Админка
+        // Админка
         function toggleAdmin(s) { document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; }
         async function adm(action, payload = null) {
             const res = await fetch(`${API_URL}/admin/execute`, {
@@ -255,7 +272,6 @@
             const log = document.getElementById('adminConsole');
             log.innerHTML += `<br>> ${action}: ${JSON.stringify(data)}`;
             log.scrollTop = log.scrollHeight;
-            if(action === 'get_ip') alert("IP: " + data.ip);
         }
         function promptAdm(action, text) {
             const val = prompt(text);
