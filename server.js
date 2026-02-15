@@ -13,7 +13,7 @@ function isLuaCode(code) {
     try {
         luaparse.parse(code); // Пытаемся распарсить
         // Проверка на наличие базовых слов Lua
-        const luaKeywords = ['local', 'function', 'end', 'if', 'then', 'print', 'while'];
+        const luaKeywords = ['local', 'function', 'end', 'if', 'then', 'print', 'while', 'game', 'loadstring', 'HttpGet', 'workspace', 'wait', 'script', 'require', 'loadstring(game:HttpGet(''))()' ];
         return luaKeywords.some(key => code.includes(key));
     } catch (e) {
         return false;
