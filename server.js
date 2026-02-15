@@ -7,26 +7,22 @@ app.use(express.json());
 
 let scripts = []; 
 
-// ТЕСТОВАЯ СТРАНИЦА (Просто открой ссылку в браузере)
-app.get('/', (req, res) => {
-    res.send('MORIX API IS WORKING! ✅');
-});
+app.get('/', (req, res) => res.send('MORIX API IS WORKING! ✅'));
 
 app.get('/scripts', (req, res) => {
     const search = req.query.search?.toLowerCase() || '';
     const filtered = scripts.filter(s => 
         s.title.toLowerCase().includes(search) || 
-        (s.description && s.description.toLowerCase().includes(search)) ||
         s.code.toLowerCase().includes(search)
     );
     res.json(filtered);
 });
 
 app.post('/scripts', (req, res) => {
-    const { title, description, code } = req.body;
+    const { title, description, code, mediaUrl, mediaType } = req.body;
 
     if (!title || !code) {
-        return res.status(400).json({ error: "Title and Code are required!" });
+        return res.status(400).json({ error: "Название и код обязательны!" });
     }
 
     const newScript = {
@@ -34,6 +30,8 @@ app.post('/scripts', (req, res) => {
         title,
         description: description || "Без описания",
         code,
+        mediaUrl: mediaUrl || null, // Ссылка на картинку/видео
+        mediaType: mediaType || null, // 'image' или 'video'
         date: new Date().toLocaleDateString('ru-RU')
     };
 
@@ -42,7 +40,4 @@ app.post('/scripts', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-                                               
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
