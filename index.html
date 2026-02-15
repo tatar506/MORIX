@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MORIX SCRIPTS - Lua Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #0d1117; color: #e6edf3; font-family: 'JetBrains Mono', monospace; }
+        .glass { background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(10px); border: 1px solid #30363d; }
+        .lua-card { transition: 0.3s; }
+        .lua-card:hover { border-color: #8b5cf6; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
+    </style>
+</head>
+<body class="p-5">
+
+    <!-- Header -->
+    <header class="max-w-5xl mx-auto flex justify-between items-center mb-10">
+        <h1 class="text-3xl font-bold text-purple-500 tracking-tighter">MORIX SCRIPTS</h1>
+        <input type="text" id="searchInput" placeholder="Поиск по названию..." 
+            class="bg-[#161b22] border border-[#30363d] px-4 py-2 rounded-lg focus:border-purple-500 outline-none w-64">
+    </header>
+
+    <main class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Форма добавления -->
+        <div class="md:col-span-1 glass p-6 rounded-xl h-fit sticky top-5">
+            <h2 class="text-xl font-bold mb-4 text-purple-400">Опубликовать Lua</h2>
+            <input type="text" id="title" placeholder="Название" class="w-full mb-3 bg-[#0d1117] border border-[#30363d] p-2 rounded">
+            <input type="text" id="desc" placeholder="Описание" class="w-full mb-3 bg-[#0d1117] border border-[#30363d] p-2 rounded">
+            <textarea id="code" placeholder="Вставь Lua код здесь..." class="w-full h-40 mb-3 bg-[#0d1117] border border-[#30363d] p-2 rounded text-xs"></textarea>
+            <button onclick="uploadScript()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded transition">Залить</button>
+        </div>
+
+        <!-- Список скриптов -->
+        <div class="md:col-span-2 space-y-4" id="scriptsList">
+            <!-- Сюда будут подгружаться скрипты -->
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "ТВОЙ_URL_НА_RENDER"; // Замени на ссылку от Render после деплоя
+
+        async function loadScripts(search = '') {
+            const res = await fetch(`${API_URL}/scripts?search=${search}`);
+            const data = await res.json();
+            const container = document.getElementById('scriptsList');
+            container.innerHTML = '';
+
+            data.forEach(s => {
+                container.innerHTML += `
+                    <div class="glass p-5 rounded-xl lua-card">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-lg font-bold text-white">${s.title}</h3>
+                                <p class="text-gray-400 text-sm">${s.description}</p>
+                            </div>
+                            <span class="text-xs text-gray-500">${s.date}</span>
+                        </div>
+                        <pre class="bg-[#0d1117] p-3 rounded text-xs text-green-400 overflow-x-auto mb-3 max-h-32"><code>${s.code}</code></pre>
+                        <button onclick="copyCode(\`${s.code.replace(/`/g, '\\`')}\`)" class="text-xs bg-gray-700 hover:bg-purple-600 px-3 py-1 rounded transition">Копировать Lua</button>
+                    </div>
+                `;
+            });
+        }
+
+        async function uploadScript() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('desc').value;
+            const code = document.getElementById('code').value;
+
+            const res = await fetch(`${API_URL}/scripts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, description, code })
+            });
+
+            const result = await res.json();
+            if (result.success) {
+                alert("Скрипт опубликован!");
+                location.reload();
+            } else {
+                alert("Ошибка: " + result.error);
+            }
+        }
+
+        function copyCode(text) {
+            navigator.clipboard.writeText(text);
+            alert("Код скопирован в буфер обмена!");
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            loadScripts(e.target.value);
+        });
+
+        loadScripts();
+    </script>
+</body>
+</html>
