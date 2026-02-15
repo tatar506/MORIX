@@ -3,65 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORIX SCRIPTS - Lua Hub</title>
+    <title>MORIX SCRIPTS | Premium Lua Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0d1117; color: #e6edf3; font-family: 'JetBrains Mono', monospace; }
-        .glass { background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(10px); border: 1px solid #30363d; }
-        .lua-card { transition: 0.3s; }
-        .lua-card:hover { border-color: #8b5cf6; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
+        :root {
+            --bg: #050508;
+            --card: rgba(17, 18, 27, 0.8);
+            --accent: #8b5cf6;
+            --accent-glow: rgba(139, 92, 246, 0.4);
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 50% -20%, #1e1b4b 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, #0f172a 0%, transparent 40%);
+            color: #e2e8f0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Стекло (Glassmorphism) */
+        .glass {
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Анимация появления карточек */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        /* Красивый скроллбар */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* Кнопка с неоновым свечением */
+        .btn-glow {
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Поле ввода кода */
+        .code-area {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+        }
+        .code-area:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.1);
+        }
     </style>
 </head>
-<body class="p-5">
+<body class="pb-20">
 
-    <!-- Header -->
-    <header class="max-w-5xl mx-auto flex justify-between items-center mb-10">
-        <h1 class="text-3xl font-bold text-purple-500 tracking-tighter">MORIX SCRIPTS</h1>
-        <input type="text" id="searchInput" placeholder="Поиск по названию..." 
-            class="bg-[#161b22] border border-[#30363d] px-4 py-2 rounded-lg focus:border-purple-500 outline-none w-64">
-    </header>
+    <!-- Навигация -->
+    <nav class="sticky top-0 z-50 glass border-b border-white/5 mb-10">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center font-black text-white shadow-lg shadow-purple-500/50">M</div>
+                <h1 class="text-xl font-extrabold tracking-tighter bg-gradient-to-r from-white to-purple-400 bg-clip-text text-transparent">
+                    MORIX SCRIPTS
+                </h1>
+            </div>
+            
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Поиск скриптов..." 
+                    class="bg-black/40 border border-white/5 pl-10 pr-4 py-2 rounded-full w-48 md:w-80 focus:w-96 transition-all focus:border-purple-500 focus:outline-none text-sm">
+            </div>
+        </div>
+    </nav>
 
-    <main class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Форма добавления -->
-        <div class="md:col-span-1 glass p-6 rounded-xl h-fit sticky top-5">
-            <h2 class="text-xl font-bold mb-4 text-purple-400">Опубликовать Lua</h2>
-            <input type="text" id="title" placeholder="Название" class="w-full mb-3 bg-[#0d1117] border border-[#30363d] p-2 rounded">
-            <input type="text" id="desc" placeholder="Описание" class="w-full mb-3 bg-[#0d1117] border border-[#30363d] p-2 rounded">
-            <textarea id="code" placeholder="Вставь Lua код здесь..." class="w-full h-40 mb-3 bg-[#0d1117] border border-[#30363d] p-2 rounded text-xs"></textarea>
-            <button onclick="uploadScript()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded transition">Залить</button>
+    <main class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Левая колонка: Форма -->
+        <div class="lg:col-span-4">
+            <div class="glass p-6 rounded-3xl sticky top-28">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                    <span class="w-2 h-6 bg-purple-500 rounded-full"></span>
+                    Опубликовать
+                </h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-400 ml-1 mb-1 block">Название проекта</label>
+                        <input type="text" id="title" placeholder="Напр: Infinite Yield" 
+                            class="w-full code-area p-3 rounded-xl text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 ml-1 mb-1 block">Описание</label>
+                        <input type="text" id="desc" placeholder="Кратко о скрипте..." 
+                            class="w-full code-area p-3 rounded-xl text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 ml-1 mb-1 block">Lua код</label>
+                        <textarea id="code" placeholder="print('Hello Morix!')" 
+                            class="w-full h-48 code-area p-4 rounded-xl text-xs mono resize-none"></textarea>
+                    </div>
+                    
+                    <button onclick="uploadScript()" 
+                        class="w-full btn-glow bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 mt-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                        Залить скрипт
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- Список скриптов -->
-        <div class="md:col-span-2 space-y-4" id="scriptsList">
-            <!-- Сюда будут подгружаться скрипты -->
+        <!-- Правая колонка: Лента -->
+        <div class="lg:col-span-8">
+            <div id="scriptsList" class="space-y-6">
+                <!-- Скрипты загружаются сюда -->
+            </div>
         </div>
     </main>
 
+    <!-- Уведомление -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass px-6 py-3 rounded-full text-sm font-bold border border-purple-500/50 text-purple-400 opacity-0 transition-all pointer-events-none z-[100]">
+        Код скопирован!
+    </div>
+
     <script>
-        const API_URL = "https://morix.onrender.com"; // Замени на ссылку от Render после деплоя
+        const API_URL = "https://morix.onrender.com"; // ВСТАВЬ СВОЮ ССЫЛКУ СЮДА
 
         async function loadScripts(search = '') {
-            const res = await fetch(`${API_URL}/scripts?search=${search}`);
-            const data = await res.json();
-            const container = document.getElementById('scriptsList');
-            container.innerHTML = '';
+            try {
+                const res = await fetch(`${API_URL}/scripts?search=${search}`);
+                const data = await res.json();
+                const container = document.getElementById('scriptsList');
+                container.innerHTML = '';
 
-            data.forEach(s => {
-                container.innerHTML += `
-                    <div class="glass p-5 rounded-xl lua-card">
-                        <div class="flex justify-between items-start mb-3">
+                if (data.length === 0) {
+                    container.innerHTML = `<div class="text-center py-20 text-gray-500">Скриптов пока нет или ничего не найдено...</div>`;
+                    return;
+                }
+
+                data.forEach((s, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'glass p-6 rounded-3xl animate-card';
+                    card.style.animationDelay = `${index * 0.1}s`;
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
                             <div>
-                                <h3 class="text-lg font-bold text-white">${s.title}</h3>
-                                <p class="text-gray-400 text-sm">${s.description}</p>
+                                <h3 class="text-lg font-extrabold text-white tracking-tight">${s.title}</h3>
+                                <p class="text-gray-400 text-sm mt-1">${s.description}</p>
                             </div>
-                            <span class="text-xs text-gray-500">${s.date}</span>
+                            <span class="text-[10px] uppercase tracking-widest text-gray-600 bg-white/5 px-2 py-1 rounded-md">${s.date}</span>
                         </div>
-                        <pre class="bg-[#0d1117] p-3 rounded text-xs text-green-400 overflow-x-auto mb-3 max-h-32"><code>${s.code}</code></pre>
-                        <button onclick="copyCode(\`${s.code.replace(/`/g, '\\`')}\`)" class="text-xs bg-gray-700 hover:bg-purple-600 px-3 py-1 rounded transition">Копировать Lua</button>
-                    </div>
-                `;
-            });
+                        <div class="relative group">
+                            <pre class="bg-black/60 p-4 rounded-2xl text-[11px] text-purple-300 overflow-x-auto border border-white/5 mono max-h-40"><code>${s.code}</code></pre>
+                            <button onclick="copyCode(this, \`${s.code.replace(/`/g, '\\`')}\` text-white)" 
+                                class="absolute top-2 right-2 bg-purple-600 hover:bg-purple-500 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition shadow-xl">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (e) {
+                console.error("Ошибка загрузки:", e);
+            }
         }
 
         async function uploadScript() {
@@ -69,24 +192,44 @@
             const description = document.getElementById('desc').value;
             const code = document.getElementById('code').value;
 
+            if(!title || !code) {
+                showToast("Заполни название и код!");
+                return;
+            }
+
             const res = await fetch(`${API_URL}/scripts`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, description, code })
             });
 
-            const result = await res.json();
-            if (result.success) {
-                alert("Скрипт опубликован!");
-                location.reload();
-            } else {
-                alert("Ошибка: " + result.error);
+            if (res.ok) {
+                showToast("Скрипт успешно добавлен!");
+                document.getElementById('title').value = '';
+                document.getElementById('desc').value = '';
+                document.getElementById('code').value = '';
+                loadScripts();
             }
         }
 
-        function copyCode(text) {
+        function copyCode(btn, text) {
             navigator.clipboard.writeText(text);
-            alert("Код скопирован в буфер обмена!");
+            showToast("Код скопирован в буфер!");
+            
+            const originalIcon = btn.innerHTML;
+            btn.innerHTML = `<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>`;
+            setTimeout(() => btn.innerHTML = originalIcon, 2000);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            t.style.bottom = '40px';
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.bottom = '10px';
+            }, 3000);
         }
 
         document.getElementById('searchInput').addEventListener('input', (e) => {
