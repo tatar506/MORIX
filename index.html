@@ -3,181 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORIX | Admin Supreme</title>
+    <title>MORIX SCRIPTS | Global Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Plus+Jakarta+Sans:wght@400;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #a855f7; --bg: #050507; }
-        body { background: var(--bg); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass { background: rgba(15, 15, 20, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
-        .admin-panel { position: fixed; inset: 0; z-index: 200; background: #000; display: none; padding: 40px; overflow-y: auto; }
-        .admin-panel.active { display: block; animation: zoomIn 0.3s ease; }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .stat-card { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .fn-btn { background: #1a1a24; padding: 10px; border-radius: 12px; font-size: 11px; text-align: center; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
-        .fn-btn:hover { border-color: var(--accent); background: var(--accent); color: white; }
+        :root { --accent: #a855f7; --bg: #06060a; }
+        body { background: var(--bg); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        
+        /* Экраны */
+        .screen { display: none; min-height: 100vh; }
+        .screen.active { display: block; }
+
+        /* Дизайн */
+        .glass { background: rgba(15, 15, 20, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .btn-purple { background: linear-gradient(135deg, #a855f7, #6b21a8); transition: 0.3s; cursor: pointer; }
+        .btn-purple:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+        
+        /* Анимации */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-up { animation: fadeInUp 0.5s ease-out forwards; }
+
+        /* Плавающая кнопка */
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 64px; height: 64px; border-radius: 50%; z-index: 50; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(168, 85, 247, 0.3); }
+
+        /* Админка */
+        #adminPanel { position: fixed; inset: 0; z-index: 1000; background: #000; display: none; padding: 40px; overflow-y: auto; }
+        #adminPanel.active { display: block; }
+        .fn-btn { background: #1a1a24; padding: 12px; border-radius: 12px; font-size: 11px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
+        .fn-btn:hover { background: var(--accent); border-color: white; }
     </style>
 </head>
 <body>
 
-    <!-- Уведомление от системы -->
-    <div id="sysNotify" class="hidden bg-purple-600 text-white text-center py-2 text-xs font-bold uppercase tracking-widest"></div>
-
-    <nav class="glass sticky top-0 z-50 px-8 py-5 flex justify-between items-center">
-        <h1 class="text-2xl font-black italic">MORIX <span class="text-purple-500">SCRIPTS</span></h1>
-        <div class="flex gap-4">
-            <div id="adminBtn" onclick="openAdmin()" class="hidden bg-red-600 px-4 py-2 rounded-full text-[10px] font-bold cursor-pointer hover:scale-105 transition">ADMIN CENTER</div>
-            <span id="uName" class="text-gray-400 font-bold self-center"></span>
+    <!-- 1. INTRO (ПРИВЕТСТВИЕ) -->
+    <div id="introScreen" class="fixed inset-0 z-[2000] bg-black flex items-center justify-center transition-opacity duration-1000">
+        <div class="text-center">
+            <h1 class="text-7xl font-black italic tracking-tighter text-white animate-pulse">MORIX</h1>
+            <p class="text-purple-500 tracking-[0.6em] text-[10px] mt-4 uppercase font-bold">Initializing...</p>
         </div>
-    </nav>
+    </div>
 
-    <main id="list" class="max-w-4xl mx-auto p-8 space-y-10"></main>
+    <!-- 2. BOT CHECK (Я НЕ РОБОТ) -->
+    <div id="botScreen" class="screen flex items-center justify-center p-6 text-center">
+        <div class="glass p-12 rounded-[3.5rem] max-w-sm anim-up">
+            <h2 class="text-3xl font-extrabold mb-4">Безопасность</h2>
+            <p class="text-gray-500 mb-10">Подтвердите, что вы человек, чтобы войти в MORIX</p>
+            <button onclick="verifyBot()" class="w-full btn-purple py-4 rounded-2xl font-bold uppercase tracking-widest">Я НЕ РОБОТ</button>
+        </div>
+    </div>
 
-    <!-- ПАНЕЛЬ АДМИНИСТРАТОРА (50 ФУНКЦИЙ) -->
-    <div id="adminPanel" class="admin-panel">
-        <div class="max-w-6xl mx-auto">
+    <!-- 3. AUTH (ВХОД / РЕГИСТРАЦИЯ) -->
+    <div id="authScreen" class="screen flex items-center justify-center p-6">
+        <div class="glass p-10 rounded-[3rem] w-full max-w-md anim-up">
+            <h2 id="authTitle" class="text-3xl font-black mb-8">Вход</h2>
+            <div class="space-y-4">
+                <input type="text" id="authUser" placeholder="Логин" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-all">
+                <input type="password" id="authPass" placeholder="Пароль" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-all">
+                <button onclick="handleAuth()" id="authBtn" class="w-full btn-purple py-4 rounded-2xl font-bold mt-4 shadow-lg">ВОЙТИ</button>
+                <p onclick="toggleAuth()" id="authToggle" class="text-center text-xs text-gray-500 mt-6 cursor-pointer hover:text-white transition">Нет аккаунта? Создать</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. MAIN HUB (ОСНОВНОЙ САЙТ) -->
+    <div id="mainScreen" class="screen">
+        <nav class="glass sticky top-0 z-40 px-8 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-purple-600 rounded-xl flex items-center justify-center font-black">M</div>
+                <h1 class="text-2xl font-black tracking-tighter uppercase italic">MORIX <span class="text-purple-500 font-normal">SCRIPTS</span></h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <input type="text" id="searchInput" oninput="loadScripts()" placeholder="Поиск..." class="bg-white/5 border border-white/10 px-6 py-2 rounded-full text-xs outline-none focus:w-64 transition-all">
+                <div id="adminBtn" onclick="toggleAdmin(true)" class="hidden bg-red-600 px-4 py-2 rounded-full text-[10px] font-bold cursor-pointer hover:bg-red-700 transition uppercase tracking-widest">Admin Center</div>
+            </div>
+        </nav>
+
+        <div id="globalMsg" class="hidden bg-purple-600 text-white text-center py-2 text-[10px] font-bold uppercase tracking-widest"></div>
+
+        <main id="scriptsList" class="max-w-4xl mx-auto p-6 space-y-10 pb-40"></main>
+
+        <div class="fab btn-purple" onclick="togglePublishMenu(true)">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+        </div>
+    </div>
+
+    <!-- SIDE MENU: PUBLISH -->
+    <div id="publishMenu" class="fixed top-0 right-[-100%] w-full max-w-md h-full glass z-[100] transition-all duration-500 p-10">
+        <div class="flex justify-between items-center mb-10"><h2 class="text-2xl font-bold">Опубликовать</h2><button onclick="togglePublishMenu(false)">❌</button></div>
+        <div class="space-y-4">
+            <input type="text" id="sTitle" placeholder="Название скрипта" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500">
+            <textarea id="sCode" placeholder="Вставь Lua код..." class="w-full h-56 bg-white/5 border border-white/10 p-4 rounded-2xl outline-none font-mono text-xs"></textarea>
+            <div onclick="document.getElementById('fInput').click()" id="fPreview" class="w-full h-40 border-2 border-dashed border-white/10 rounded-3xl flex items-center justify-center cursor-pointer overflow-hidden text-gray-500">Прикрепить Медиа (5с)</div>
+            <input type="file" id="fInput" class="hidden" onchange="previewMedia(this)">
+            <button onclick="uploadScript()" class="w-full btn-purple py-5 rounded-2xl font-bold text-lg shadow-xl">ЗАЛИТЬ</button>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel">
+        <div class="max-w-6xl mx-auto py-10">
             <div class="flex justify-between items-center mb-10">
-                <h2 class="text-4xl font-black uppercase">Master Dashboard</h2>
-                <button onclick="closeAdmin()" class="text-gray-500 hover:text-white">CLOSE [ESC]</button>
+                <h2 class="text-4xl font-black">MASTER ADMIN</h2>
+                <button onclick="toggleAdmin(false)" class="bg-white/10 px-6 py-2 rounded-xl text-xs">ВЕРНУТЬСЯ</button>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                <div class="stat-card">
-                    <p class="text-gray-500 text-xs uppercase mb-1">Total Users</p>
-                    <p id="statUsers" class="text-2xl font-black">0</p>
-                </div>
-                <div class="stat-card">
-                    <p class="text-gray-500 text-xs uppercase mb-1">Total Scripts</p>
-                    <p id="statScripts" class="text-2xl font-black">0</p>
-                </div>
-                <div class="stat-card">
-                    <p class="text-gray-500 text-xs uppercase mb-1">Banned IPs</p>
-                    <p id="statBanned" class="text-2xl font-black text-red-500">0</p>
-                </div>
-                <div class="stat-card">
-                    <p class="text-gray-500 text-xs uppercase mb-1">Server Status</p>
-                    <p class="text-2xl font-black text-green-500">STABLE</p>
-                </div>
-            </div>
-
-            <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><span class="w-2 h-2 bg-purple-500 rounded-full animate-ping"></span> Функции управления</h3>
-            
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <!-- Группа 1: Пользователи -->
                 <div onclick="adm('get_users_list')" class="fn-btn">Список пользователей</div>
-                <div onclick="promptAdm('get_ip', 'Введите ник')" class="fn-btn text-purple-400">Узнать IP по Нику</div>
-                <div onclick="promptAdm('ban_ip', 'Введите IP')" class="fn-btn text-red-400">Забанить IP</div>
+                <div onclick="promptAdm('get_ip', 'Введите ник')" class="fn-btn">Узнать IP юзера</div>
+                <div onclick="promptAdm('ban_ip', 'Введите IP')" class="fn-btn text-red-500">Забанить IP</div>
                 <div onclick="promptAdm('unban_ip', 'Введите IP')" class="fn-btn">Разбанить IP</div>
-                <div onclick="promptAdm('verify_user', 'Введите ник')" class="fn-btn">Выдать Галочку</div>
-                
-                <!-- Группа 2: Сервер -->
-                <div onclick="adm('set_maintenance', true)" class="fn-btn bg-orange-900/20">Включить Тех.Работы</div>
+                <div onclick="promptAdm('verify_user', 'Введите ник')" class="fn-btn text-blue-400">Выдать Галочку</div>
+                <div onclick="adm('set_maintenance', true)" class="fn-btn">Включить Тех.Работы</div>
                 <div onclick="adm('set_maintenance', false)" class="fn-btn">Выключить Тех.Работы</div>
-                <div onclick="promptAdm('set_notify', 'Введите текст')" class="fn-btn">Глобальное Уведомление</div>
-                <div onclick="adm('clear_scripts')" class="fn-btn text-red-500">Очистить все скрипты</div>
-                <div onclick="location.reload()" class="fn-btn">Перезагрузить систему</div>
-
-                <!-- Остальные функции (заглушки для примера, которые можно расширять) -->
-                <div class="fn-btn opacity-50 italic">Логи действий</div>
-                <div class="fn-btn opacity-50 italic">Сменить тему сайта</div>
-                <div class="fn-btn opacity-50 italic">Запретить регистрацию</div>
-                <div class="fn-btn opacity-50 italic">Очистить кэш</div>
-                <div class="fn-btn opacity-50 italic">Рассылка сообщений</div>
-                <div class="fn-btn opacity-50 italic">Аналитика трафика</div>
-                <div class="fn-btn opacity-50 italic">Режим Бога</div>
-                <div class="fn-btn opacity-50 italic">Anti-DDoS (High)</div>
-                <div class="fn-btn opacity-50 italic">Удалить неактивных</div>
-                <div class="fn-btn opacity-50 italic">Backup Database</div>
+                <div onclick="promptAdm('set_notify', 'Текст сообщения')" class="fn-btn">Глобальное уведомление</div>
+                <div onclick="adm('clear_scripts')" class="fn-btn text-red-600">Очистить ленту</div>
+                <div onclick="location.reload()" class="fn-btn font-bold">REBOOT SYSTEM</div>
             </div>
-
-            <div id="adminConsole" class="mt-10 p-6 bg-zinc-900 rounded-3xl font-mono text-[10px] text-green-500 h-64 overflow-y-auto">
-                > System initialized...<br>
-                > Admin tatar_506 logged in...
+            <div id="adminConsole" class="mt-10 p-6 bg-zinc-900 rounded-3xl font-mono text-[10px] text-green-500 h-64 overflow-y-auto shadow-inner">
+                > System ready...
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = "ТВОЙ_ССЫЛКА_ОТ_RENDER";
-        let currentUser = null, adminPass = "";
+        const API_URL = "https://morix.onrender.com"; // ЗАМЕНИ НА СВОЙ!
+        let currentUser = null, isAdmin = false, aPass = "", isLogin = true, tempMedia = null;
 
-        // Открытие админки
-        function openAdmin() {
-            document.getElementById('adminPanel').classList.add('active');
-            adm('get_stats');
+        // Показ экранов
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'mainScreen') loadScripts();
         }
-        function closeAdmin() { document.getElementById('adminPanel').classList.remove('active'); }
 
-        // Универсальная функция запроса админки
+        // 1. Приветствие
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('introScreen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('introScreen').style.display = 'none';
+                    showScreen('botScreen');
+                }, 1000);
+            }, 2500);
+        };
+
+        // 2. Проверка бота
+        function verifyBot() { showScreen('authScreen'); }
+
+        // 3. Авторизация
+        function toggleAuth() {
+            isLogin = !isLogin;
+            document.getElementById('authTitle').innerText = isLogin ? "Вход" : "Регистрация";
+            document.getElementById('authBtn').innerText = isLogin ? "ВОЙТИ" : "СОЗДАТЬ";
+            document.getElementById('authToggle').innerText = isLogin ? "Нет аккаунта? Создать" : "Есть аккаунт? Войти";
+        }
+
+        async function handleAuth() {
+            const username = document.getElementById('authUser').value;
+            const password = document.getElementById('authPass').value;
+            const route = isLogin ? '/auth/login' : '/auth/register';
+
+            const res = await fetch(`${API_URL}${route}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            });
+            const data = await res.json();
+
+            if(data.success) {
+                if(isLogin) {
+                    currentUser = data.username;
+                    if(data.role === 'admin') {
+                        isAdmin = true; aPass = password;
+                        document.getElementById('adminBtn').classList.remove('hidden');
+                    }
+                    showScreen('mainScreen');
+                } else {
+                    alert("Успех! Теперь войдите");
+                    toggleAuth();
+                }
+            } else alert(data.error);
+        }
+
+        // 4. Скрипты
+        async function loadScripts() {
+            const s = document.getElementById('searchInput').value;
+            const res = await fetch(`${API_URL}/scripts?search=${s}`);
+            const data = await res.json();
+            
+            // Глобальное сообщение
+            if(data.config.globalNotification) {
+                const g = document.getElementById('globalMsg');
+                g.innerText = data.config.globalNotification;
+                g.classList.remove('hidden');
+            }
+
+            const list = document.getElementById('scriptsList');
+            list.innerHTML = '';
+            data.scripts.forEach(script => {
+                let media = script.mediaData ? (script.mediaType === 'video' 
+                    ? `<video src="${script.mediaData}" autoplay muted loop class="w-full h-80 object-cover rounded-[2.5rem] mb-6 shadow-2xl">` 
+                    : `<img src="${script.mediaData}" class="w-full h-80 object-cover rounded-[2.5rem] mb-6 shadow-2xl">`) : '';
+
+                list.innerHTML += `
+                    <div class="glass p-8 rounded-[3rem] anim-up border-white/5">
+                        ${media}
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-2xl font-black">${script.title} ${script.isVerified ? '<span class="text-blue-500">✔</span>':''}</h3>
+                            <span class="text-[10px] text-gray-600 font-bold tracking-widest uppercase">${script.date}</span>
+                        </div>
+                        <p class="text-purple-400 text-[10px] font-bold uppercase mb-6 tracking-tighter">By @${script.author}</p>
+                        <div class="relative group">
+                            <pre class="bg-black/40 p-6 rounded-2xl text-[11px] text-purple-300 font-mono overflow-x-auto max-h-60 border border-white/5"><code>${script.code}</code></pre>
+                            <button onclick="navigator.clipboard.writeText(\`${script.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`); alert('Copied!')" class="absolute top-4 right-4 bg-purple-600 p-2 rounded-xl opacity-0 group-hover:opacity-100 transition shadow-lg">Copy</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 5. Публикация
+        function togglePublishMenu(s) { document.getElementById('publishMenu').style.right = s ? '0' : '-100%'; }
+        function previewMedia(input) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                tempMedia = e.target.result;
+                const isVid = input.files[0].type.includes('video');
+                document.getElementById('fPreview').innerHTML = isVid ? `<video src="${tempMedia}" muted autoplay loop class="h-full w-full object-cover">` : `<img src="${tempMedia}" class="h-full w-full object-cover">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+        async function uploadScript() {
+            const title = document.getElementById('sTitle').value;
+            const code = document.getElementById('sCode').value;
+            await fetch(`${API_URL}/scripts`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({title, code, author: currentUser, mediaData: tempMedia, mediaType: tempMedia?.includes('video') ? 'video':'image'})
+            });
+            location.reload();
+        }
+
+        // 6. Админка
+        function toggleAdmin(s) { document.getElementById('adminPanel').style.display = s ? 'block' : 'none'; }
         async function adm(action, payload = null) {
             const res = await fetch(`${API_URL}/admin/execute`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ adminPass, action, payload })
+                body: JSON.stringify({ adminPass: aPass, action, payload })
             });
             const data = await res.json();
-            
             const log = document.getElementById('adminConsole');
             log.innerHTML += `<br>> ${action}: ${JSON.stringify(data)}`;
             log.scrollTop = log.scrollHeight;
-
-            if(action === 'get_stats') {
-                document.getElementById('statUsers').innerText = data.users;
-                document.getElementById('statScripts').innerText = data.scripts;
-                document.getElementById('statBanned').innerText = data.banned;
-            }
-            if(action === 'get_ip') alert("IP пользователя: " + data.ip);
+            if(action === 'get_ip') alert("IP: " + data.ip);
         }
-
         function promptAdm(action, text) {
             const val = prompt(text);
             if(val) adm(action, val);
-        }
-
-        // Логика входа (упрощено для примера)
-        async function login(u, p) {
-            const res = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: u, password: p})
-            });
-            const data = await res.json();
-            if(data.success) {
-                currentUser = data.username;
-                document.getElementById('uName').innerText = currentUser;
-                if(data.role === 'admin') {
-                    adminPass = p;
-                    document.getElementById('adminBtn').classList.remove('hidden');
-                }
-                load();
-            }
-        }
-
-        // Пример вызова входа (вставь свои данные или сделай форму)
-        // login('tatar_506', 'spinogrz666');
-
-        async function load() {
-            const res = await fetch(`${API_URL}/scripts`);
-            const data = await res.json();
-            
-            if(data.config.globalNotification) {
-                const n = document.getElementById('sysNotify');
-                n.innerText = data.config.globalNotification;
-                n.classList.remove('hidden');
-            }
-
-            const list = document.getElementById('list');
-            list.innerHTML = '';
-            data.scripts.forEach(s => {
-                list.innerHTML += `
-                    <div class="glass p-8 rounded-[2.5rem]">
-                        <h3 class="text-xl font-bold">${s.title} ${s.isVerified ? '✔':''}</h3>
-                        <p class="text-xs text-purple-400 mb-4">By ${s.author}</p>
-                        <pre class="bg-black/50 p-4 rounded-xl text-[10px] mono text-purple-200">${s.code}</pre>
-                        ${adminPass ? `<button onclick="adm('del_script', ${s.id})" class="mt-4 text-red-500 text-[10px] uppercase font-bold">Удалить (Админ)</button>` : ''}
-                    </div>
-                `;
-            });
         }
     </script>
 </body>
