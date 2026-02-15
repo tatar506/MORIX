@@ -2,12 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+// Увеличиваем лимит данных до 15 МБ, чтобы видео пролезало
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ limit: '15mb', extended: true }));
 app.use(cors());
-app.use(express.json());
 
 let scripts = []; 
 
-app.get('/', (req, res) => res.send('MORIX API IS WORKING! ✅'));
+app.get('/', (req, res) => res.send('MORIX API IS WORKING! ✅ (Base64 Mode)'));
 
 app.get('/scripts', (req, res) => {
     const search = req.query.search?.toLowerCase() || '';
@@ -19,7 +21,7 @@ app.get('/scripts', (req, res) => {
 });
 
 app.post('/scripts', (req, res) => {
-    const { title, description, code, mediaUrl, mediaType } = req.body;
+    const { title, description, code, mediaData, mediaType } = req.body;
 
     if (!title || !code) {
         return res.status(400).json({ error: "Название и код обязательны!" });
@@ -30,7 +32,7 @@ app.post('/scripts', (req, res) => {
         title,
         description: description || "Без описания",
         code,
-        mediaUrl: mediaUrl || null, // Ссылка на картинку/видео
+        mediaData: mediaData || null, // Сама картинка/видео в формате текста
         mediaType: mediaType || null, // 'image' или 'video'
         date: new Date().toLocaleDateString('ru-RU')
     };
