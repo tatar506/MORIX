@@ -3,239 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORIX SCRIPTS | Premium Lua Hub</title>
+    <title>MORIX SCRIPTS | Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #050508;
-            --card: rgba(17, 18, 27, 0.8);
-            --accent: #8b5cf6;
-            --accent-glow: rgba(139, 92, 246, 0.4);
-        }
-
-        body {
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 50% -20%, #1e1b4b 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, #0f172a 0%, transparent 40%);
-            color: #e2e8f0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            min-height: 100vh;
-        }
-
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* Стекло (Glassmorphism) */
-        .glass {
-            background: var(--card);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Анимация появления карточек */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-card {
-            animation: fadeInUp 0.5s ease forwards;
-        }
-
-        /* Красивый скроллбар */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-        /* Кнопка с неоновым свечением */
-        .btn-glow {
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-glow:hover {
-            box-shadow: 0 0 20px var(--accent-glow);
-            transform: translateY(-2px);
-        }
-
-        /* Поле ввода кода */
-        .code-area {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: 0.3s;
-        }
-        .code-area:focus {
-            border-color: var(--accent);
-            outline: none;
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.1);
-        }
+        body { background: #050508; color: #e2e8f0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass { background: rgba(17, 18, 27, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .btn-purple { background: #8b5cf6; transition: 0.3s; }
+        .btn-purple:hover { box-shadow: 0 0 15px rgba(139, 92, 246, 0.5); transform: translateY(-2px); }
+        .preview-box { width: 100%; height: 150px; border: 2px dashed #334155; border-radius: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-10">
 
-    <!-- Навигация -->
-    <nav class="sticky top-0 z-50 glass border-b border-white/5 mb-10">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center font-black text-white shadow-lg shadow-purple-500/50">M</div>
-                <h1 class="text-xl font-extrabold tracking-tighter bg-gradient-to-r from-white to-purple-400 bg-clip-text text-transparent">
-                    MORIX SCRIPTS
-                </h1>
-            </div>
-            
-            <div class="relative group">
-                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-                <input type="text" id="searchInput" placeholder="Поиск скриптов..." 
-                    class="bg-black/40 border border-white/5 pl-10 pr-4 py-2 rounded-full w-48 md:w-80 focus:w-96 transition-all focus:border-purple-500 focus:outline-none text-sm">
-            </div>
+    <nav class="glass sticky top-0 z-50 p-4 mb-8">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-black text-purple-500">MORIX SCRIPTS</h1>
+            <input type="text" id="searchInput" placeholder="Поиск..." class="bg-black/40 border border-white/10 px-4 py-2 rounded-full text-sm outline-none focus:border-purple-500">
         </div>
     </nav>
 
     <main class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Левая колонка: Форма -->
+        <!-- Форма -->
         <div class="lg:col-span-4">
-            <div class="glass p-6 rounded-3xl sticky top-28">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-purple-500 rounded-full"></span>
-                    Опубликовать
-                </h2>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-xs text-gray-400 ml-1 mb-1 block">Название проекта</label>
-                        <input type="text" id="title" placeholder="Напр: Infinite Yield" 
-                            class="w-full code-area p-3 rounded-xl text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-400 ml-1 mb-1 block">Описание</label>
-                        <input type="text" id="desc" placeholder="Кратко о скрипте..." 
-                            class="w-full code-area p-3 rounded-xl text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-400 ml-1 mb-1 block">Lua код</label>
-                        <textarea id="code" placeholder="print('Hello Morix!')" 
-                            class="w-full h-48 code-area p-4 rounded-xl text-xs mono resize-none"></textarea>
-                    </div>
+            <div class="glass p-6 rounded-3xl sticky top-24">
+                <h2 class="text-lg font-bold mb-4">Опубликовать</h2>
+                <div class="space-y-3">
+                    <input type="text" id="title" placeholder="Название" class="w-full bg-black/20 border border-white/5 p-3 rounded-xl text-sm">
+                    <textarea id="code" placeholder="Код скрипта" class="w-full h-32 bg-black/20 border border-white/5 p-3 rounded-xl text-xs"></textarea>
                     
-                    <button onclick="uploadScript()" 
-                        class="w-full btn-glow bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 mt-4">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-                        Залить скрипт
-                    </button>
+                    <!-- Загрузка медиа -->
+                    <div class="space-y-2">
+                        <label class="text-xs text-gray-400">Картинка или Видео (макс 5 сек)</label>
+                        <input type="file" id="mediaInput" accept="image/*,video/*" class="hidden">
+                        <div onclick="document.getElementById('mediaInput').click()" class="preview-box cursor-pointer" id="mediaPreview">
+                            <span class="text-gray-500 text-xs">Нажми, чтобы выбрать файл</span>
+                        </div>
+                    </div>
+
+                    <button id="uploadBtn" onclick="handleUpload()" class="w-full btn-purple py-3 rounded-xl font-bold text-sm">Залить</button>
                 </div>
             </div>
         </div>
 
-        <!-- Правая колонка: Лента -->
-        <div class="lg:col-span-8">
-            <div id="scriptsList" class="space-y-6">
-                <!-- Скрипты загружаются сюда -->
-            </div>
-        </div>
+        <!-- Лента -->
+        <div class="lg:col-span-8 space-y-6" id="scriptsList"></div>
     </main>
 
-    <!-- Уведомление -->
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass px-6 py-3 rounded-full text-sm font-bold border border-purple-500/50 text-purple-400 opacity-0 transition-all pointer-events-none z-[100]">
-        Код скопирован!
-    </div>
-
     <script>
-        const API_URL = "https://morix.onrender.com"; // ВСТАВЬ СВОЮ ССЫЛКУ СЮДА
+        const API_URL = "ТВОЯ_ССЫЛКА_ОТ_RENDER"; 
+        
+        // ДАННЫЕ CLOUDINARY (создай бесплатный аккаунт на cloudinary.com)
+        const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/ТВОЙ_CLOUDINARY_NAME/upload";
+        const CLOUDINARY_PRESET = "ТВОЙ_UPLOAD_PRESET"; 
 
-        async function loadScripts(search = '') {
-            try {
-                const res = await fetch(`${API_URL}/scripts?search=${search}`);
-                const data = await res.json();
-                const container = document.getElementById('scriptsList');
-                container.innerHTML = '';
+        let selectedFile = null;
 
-                if (data.length === 0) {
-                    container.innerHTML = `<div class="text-center py-20 text-gray-500">Скриптов пока нет или ничего не найдено...</div>`;
-                    return;
-                }
+        // Предпросмотр и проверка видео
+        document.getElementById('mediaInput').onchange = function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-                data.forEach((s, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'glass p-6 rounded-3xl animate-card';
-                    card.style.animationDelay = `${index * 0.1}s`;
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-lg font-extrabold text-white tracking-tight">${s.title}</h3>
-                                <p class="text-gray-400 text-sm mt-1">${s.description}</p>
-                            </div>
-                            <span class="text-[10px] uppercase tracking-widest text-gray-600 bg-white/5 px-2 py-1 rounded-md">${s.date}</span>
-                        </div>
-                        <div class="relative group">
-                            <pre class="bg-black/60 p-4 rounded-2xl text-[11px] text-purple-300 overflow-x-auto border border-white/5 mono max-h-40"><code>${s.code}</code></pre>
-                            <button onclick="copyCode(this, \`${s.code.replace(/`/g, '\\`')}\` text-white)" 
-                                class="absolute top-2 right-2 bg-purple-600 hover:bg-purple-500 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition shadow-xl">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                            </button>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            } catch (e) {
-                console.error("Ошибка загрузки:", e);
+            if (file.type.startsWith('video')) {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.onloadedmetadata = function() {
+                    if (video.duration > 5.5) { // с запасом 0.5 сек
+                        alert("Видео слишком длинное! Максимум 5 секунд.");
+                        document.getElementById('mediaInput').value = '';
+                        return;
+                    }
+                    showPreview(file);
+                };
+                video.src = URL.createObjectURL(file);
+            } else {
+                showPreview(file);
             }
+        };
+
+        function showPreview(file) {
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('mediaPreview');
+                if (file.type.startsWith('image')) {
+                    preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                } else {
+                    preview.innerHTML = `<video src="${e.target.result}" muted autoplay loop class="w-full h-full object-cover"></video>`;
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
-        async function uploadScript() {
+        async function handleUpload() {
             const title = document.getElementById('title').value;
-            const description = document.getElementById('desc').value;
             const code = document.getElementById('code').value;
+            const uploadBtn = document.getElementById('uploadBtn');
 
-            if(!title || !code) {
-                showToast("Заполни название и код!");
-                return;
+            if (!title || !code) return alert("Заполни поля!");
+            
+            uploadBtn.innerText = "Загрузка...";
+            uploadBtn.disabled = true;
+
+            let mediaUrl = null;
+            let mediaType = null;
+
+            if (selectedFile) {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('upload_preset', CLOUDINARY_PRESET);
+
+                const cloudRes = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+                const cloudData = await cloudRes.json();
+                mediaUrl = cloudData.secure_url;
+                mediaType = selectedFile.type.startsWith('image') ? 'image' : 'video';
             }
 
             const res = await fetch(`${API_URL}/scripts`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, description, code })
+                body: JSON.stringify({ title, code, mediaUrl, mediaType })
             });
 
             if (res.ok) {
-                showToast("Скрипт успешно добавлен!");
-                document.getElementById('title').value = '';
-                document.getElementById('desc').value = '';
-                document.getElementById('code').value = '';
-                loadScripts();
+                location.reload();
             }
         }
 
-        function copyCode(btn, text) {
-            navigator.clipboard.writeText(text);
-            showToast("Код скопирован в буфер!");
-            
-            const originalIcon = btn.innerHTML;
-            btn.innerHTML = `<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>`;
-            setTimeout(() => btn.innerHTML = originalIcon, 2000);
+        async function loadScripts(search = '') {
+            const res = await fetch(`${API_URL}/scripts?search=${search}`);
+            const data = await res.json();
+            const list = document.getElementById('scriptsList');
+            list.innerHTML = '';
+
+            data.forEach(s => {
+                let mediaHtml = '';
+                if (s.mediaUrl) {
+                    mediaHtml = s.mediaType === 'image' 
+                        ? `<img src="${s.mediaUrl}" class="w-full h-48 object-cover rounded-2xl mb-4">`
+                        : `<video src="${s.mediaUrl}" autoplay muted loop class="w-full h-48 object-cover rounded-2xl mb-4"></video>`;
+                }
+
+                list.innerHTML += `
+                    <div class="glass p-6 rounded-3xl">
+                        ${mediaHtml}
+                        <h3 class="text-xl font-bold mb-2">${s.title}</h3>
+                        <pre class="bg-black/50 p-4 rounded-xl text-xs text-purple-300 overflow-x-auto mb-4"><code>${s.code}</code></pre>
+                        <button onclick="navigator.clipboard.writeText(\`${s.code}\`); alert('Скопировано!')" class="bg-white/5 hover:bg-purple-600 px-4 py-2 rounded-lg text-xs transition">Копировать Lua</button>
+                    </div>
+                `;
+            });
         }
 
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.opacity = '1';
-            t.style.bottom = '40px';
-            setTimeout(() => {
-                t.style.opacity = '0';
-                t.style.bottom = '10px';
-            }, 3000);
-        }
-
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            loadScripts(e.target.value);
-        });
-
+        document.getElementById('searchInput').oninput = (e) => loadScripts(e.target.value);
         loadScripts();
     </script>
 </body>
