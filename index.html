@@ -3,105 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MORIX SCRIPTS | Cloudless Edition</title>
+    <title>MORIX SCRIPTS | Evolution</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { background: #08080c; color: #e2e8f0; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
-        .glass { background: rgba(20, 20, 30, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); }
-        .neon-border { border: 1px solid #8b5cf6; box-shadow: 0 0 15px rgba(139, 92, 246, 0.2); }
-        .btn-main { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); transition: 0.3s; }
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4); }
-        .preview-area { width: 100%; height: 180px; border: 2px dashed #2d2d3f; border-radius: 20px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .script-card { animation: fadeIn 0.4s ease-out; }
+        :root { --accent: #8b5cf6; --bg: #06060a; }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+
+        /* Приветственная анимация */
+        #intro {
+            position: fixed; inset: 0; background: #000; z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 1s ease-out, visibility 1s;
+        }
+        .intro-text {
+            font-size: 4rem; font-weight: 900; letter-spacing: -2px;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: intro-glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes intro-glow { from { filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0)); } to { filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8)); } }
+
+        /* Стекло и Дизайн */
+        .glass { background: rgba(15, 15, 25, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .card-anim { transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+        .card-anim:hover { transform: translateY(-5px) scale(1.01); border-color: var(--accent); }
+
+        /* Боковое меню */
+        #sideMenu {
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%;
+            z-index: 100; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        #sideMenu.active { right: 0; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 90; }
+        .overlay.active { opacity: 1; visibility: visible; }
+
+        /* Плавающая кнопка */
+        .fab {
+            position: fixed; bottom: 30px; right: 30px; width: 64px; height: 64px;
+            background: var(--accent); border-radius: 50%; z-index: 80;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            cursor: pointer; transition: 0.3s;
+        }
+        .fab:hover { transform: rotate(90deg) scale(1.1); box-shadow: 0 0 30px rgba(139, 92, 246, 0.8); }
+
+        /* Стили для скролла */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        pre { white-space: pre-wrap; word-break: break-all; }
     </style>
 </head>
-<body class="pb-20">
+<body>
 
-    <!-- Навигация -->
-    <nav class="glass sticky top-0 z-50 px-6 py-4 mb-10">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <!-- ПРИВЕТСТВИЕ -->
+    <div id="intro">
+        <div class="intro-text">MORIX</div>
+        <div class="text-gray-500 tracking-[0.5em] text-xs mt-4 animate-pulse">LOADING ECOSYSTEM</div>
+    </div>
+
+    <!-- ФОНОВЫЕ СВЕЧЕНИЯ -->
+    <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/20 blur-[120px] rounded-full"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-900/10 blur-[120px] rounded-full"></div>
+
+    <!-- НАВИГАЦИЯ -->
+    <nav class="glass sticky top-0 z-40 px-6 py-5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg">M</div>
-                <span class="text-2xl font-black tracking-tighter uppercase">Morix <span class="text-purple-500">Scripts</span></span>
+                <div class="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center font-black">M</div>
+                <h1 class="text-2xl font-black tracking-tighter uppercase">Morix <span class="text-purple-500">Scripts</span></h1>
             </div>
-            <input type="text" id="searchInput" placeholder="Поиск по названию или коду..." 
-                class="bg-black/40 border border-white/10 px-6 py-2 rounded-full w-full md:w-96 focus:border-purple-500 outline-none transition-all">
+            <div class="relative group">
+                <input type="text" id="searchInput" placeholder="Поиск скриптов..." 
+                    class="bg-white/5 border border-white/10 px-6 py-2 rounded-full w-64 md:w-96 focus:border-purple-500 focus:w-[450px] transition-all outline-none">
+            </div>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Форма загрузки -->
-        <div class="lg:col-span-4">
-            <div class="glass p-8 rounded-[2rem] sticky top-28 border-purple-500/20">
-                <h2 class="text-xl font-extrabold mb-6 flex items-center gap-2">
-                    <span class="w-1.5 h-6 bg-purple-500 rounded-full"></span> Создать пост
-                </h2>
-                
-                <div class="space-y-4">
-                    <input type="text" id="title" placeholder="Название скрипта" class="w-full bg-black/30 border border-white/5 p-3 rounded-xl focus:border-purple-500 outline-none">
-                    <textarea id="code" placeholder="Вставь Lua код здесь..." class="w-full h-32 bg-black/30 border border-white/5 p-3 rounded-xl text-xs font-mono outline-none focus:border-purple-500"></textarea>
-                    
-                    <div class="space-y-2">
-                        <label class="text-[10px] text-gray-500 uppercase font-bold ml-1">Медиа (Картинка или Видео 5с)</label>
-                        <input type="file" id="fileInput" accept="image/*,video/*" class="hidden">
-                        <div onclick="document.getElementById('fileInput').click()" id="preview" class="preview-area cursor-pointer hover:border-purple-500 transition-colors">
-                            <span class="text-gray-500 text-sm text-center px-4">Нажми, чтобы прикрепить файл</span>
-                        </div>
-                    </div>
-
-                    <button id="submitBtn" onclick="submitPost()" class="w-full btn-main text-white font-bold py-4 rounded-2xl">Опубликовать</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Список скриптов -->
-        <div class="lg:col-span-8 space-y-6" id="list">
-            <!-- Загрузка... -->
+    <!-- ЛЕНТА -->
+    <main class="max-w-4xl mx-auto px-6 py-10">
+        <div id="scriptsList" class="grid grid-cols-1 gap-8">
+            <!-- Скрипты -->
         </div>
     </main>
 
+    <!-- ПЛАВАЮЩАЯ КНОПКА (ОТКРЫТЬ МЕНЮ) -->
+    <div class="fab" onclick="toggleMenu(true)">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path>
+        </svg>
+    </div>
+
+    <!-- ЗАТЕМНЕНИЕ -->
+    <div class="overlay" onclick="toggleMenu(false)"></div>
+
+    <!-- БОКОВОЕ МЕНЮ (МЕНЮШКА СОЗДАНИЯ) -->
+    <div id="sideMenu" class="p-8 flex flex-col">
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="text-2xl font-bold">Новый пост</h2>
+            <button onclick="toggleMenu(false)" class="text-gray-500 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <div class="space-y-5 overflow-y-auto pr-2">
+            <div>
+                <label class="text-xs text-gray-400 mb-2 block uppercase tracking-widest">Название</label>
+                <input type="text" id="title" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500">
+            </div>
+            <div>
+                <label class="text-xs text-gray-400 mb-2 block uppercase tracking-widest">Lua Скрипт</label>
+                <textarea id="code" class="w-full h-40 bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 font-mono text-xs"></textarea>
+            </div>
+            <div>
+                <label class="text-xs text-gray-400 mb-2 block uppercase tracking-widest">Медиа (5 сек)</label>
+                <input type="file" id="fileInput" accept="image/*,video/*" class="hidden">
+                <div onclick="document.getElementById('fileInput').click()" id="preview" class="w-full h-40 border-2 border-dashed border-white/10 rounded-2xl flex items-center justify-center cursor-pointer overflow-hidden hover:border-purple-500 transition">
+                    <span class="text-gray-500 text-sm">Прикрепить файл</span>
+                </div>
+            </div>
+            <button id="submitBtn" onclick="submitPost()" class="w-full bg-purple-600 py-4 rounded-2xl font-bold hover:bg-purple-500 transition shadow-lg shadow-purple-500/20">
+                Опубликовать
+            </button>
+        </div>
+    </div>
+
     <script>
-        const API_URL = "https://morix.onrender.com"; // ЗАМЕНИ МЕНЯ
+        const API_URL = "ТВОЯ_ССЫЛКА_ОТ_RENDER"; // <--- ЗАМЕНИ ЭТО
         let mediaBase64 = null;
         let mediaType = null;
 
-        // Обработка выбора файла
+        // Анимация приветствия
+        window.onload = () => {
+            setTimeout(() => {
+                const intro = document.getElementById('intro');
+                intro.style.opacity = '0';
+                setTimeout(() => intro.style.visibility = 'hidden', 1000);
+            }, 2500);
+            loadPosts();
+        };
+
+        function toggleMenu(show) {
+            document.getElementById('sideMenu').classList.toggle('active', show);
+            document.querySelector('.overlay').classList.toggle('active', show);
+        }
+
         document.getElementById('fileInput').onchange = function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
-            // Если видео - проверка длительности
             if (file.type.startsWith('video')) {
                 const video = document.createElement('video');
                 video.preload = 'metadata';
-                video.onloadedmetadata = function() {
-                    if (video.duration > 5.9) {
-                        alert("Видео слишком длинное (макс. 5 секунд)");
-                        return;
-                    }
-                    convertToBase64(file);
+                video.onloadedmetadata = () => {
+                    if (video.duration > 6) return alert("Видео > 5 сек!");
+                    saveFile(file);
                 };
                 video.src = URL.createObjectURL(file);
-            } else {
-                convertToBase64(file);
-            }
+            } else saveFile(file);
         };
 
-        function convertToBase64(file) {
+        function saveFile(file) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 mediaBase64 = e.target.result;
                 mediaType = file.type.startsWith('image') ? 'image' : 'video';
-                
-                const preview = document.getElementById('preview');
-                if (mediaType === 'image') {
-                    preview.innerHTML = `<img src="${mediaBase64}" class="w-full h-full object-cover">`;
-                } else {
-                    preview.innerHTML = `<video src="${mediaBase64}" muted autoplay loop class="w-full h-full object-cover"></video>`;
-                }
+                const p = document.getElementById('preview');
+                p.innerHTML = mediaType === 'image' 
+                    ? `<img src="${mediaBase64}" class="w-full h-full object-cover">`
+                    : `<video src="${mediaBase64}" muted autoplay loop class="w-full h-full object-cover"></video>`;
             };
             reader.readAsDataURL(file);
         }
@@ -109,75 +182,55 @@
         async function submitPost() {
             const title = document.getElementById('title').value;
             const code = document.getElementById('code').value;
+            if(!title || !code) return alert("Заполни данные!");
+
             const btn = document.getElementById('submitBtn');
+            btn.innerText = "Загрузка..."; btn.disabled = true;
 
-            if (!title || !code) return alert("Заполни название и код!");
-
-            btn.disabled = true;
-            btn.innerText = "Публикация...";
-
-            try {
-                const res = await fetch(`${API_URL}/scripts`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        title, code, mediaData: mediaBase64, mediaType
-                    })
-                });
-                if (res.ok) location.reload();
-            } catch (err) {
-                alert("Ошибка при отправке");
-                btn.disabled = false;
-                btn.innerText = "Опубликовать";
-            }
+            await fetch(`${API_URL}/scripts`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({title, code, mediaData: mediaBase64, mediaType})
+            });
+            location.reload();
         }
 
         async function loadPosts(search = '') {
-            const list = document.getElementById('list');
-            try {
-                const res = await fetch(`${API_URL}/scripts?search=${search}`);
-                const data = await res.json();
-                list.innerHTML = data.length ? '' : '<p class="text-center py-20 opacity-50">Ничего не найдено</p>';
-                
-                data.forEach(s => {
-                    let mediaSection = '';
-                    if (s.mediaData) {
-                        mediaSection = s.mediaType === 'image' 
-                            ? `<img src="${s.mediaData}" class="w-full h-64 object-cover rounded-2xl mb-4 shadow-lg">`
-                            : `<video src="${s.mediaData}" autoplay muted loop class="w-full h-64 object-cover rounded-2xl mb-4 shadow-lg"></video>`;
-                    }
+            const res = await fetch(`${API_URL}/scripts?search=${search}`);
+            const data = await res.json();
+            const list = document.getElementById('scriptsList');
+            list.innerHTML = '';
 
-                    list.innerHTML += `
-                        <div class="glass p-6 rounded-[2rem] script-card border-white/5">
-                            ${mediaSection}
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-bold text-white">${s.title}</h3>
-                                <span class="text-[10px] text-gray-500">${s.date}</span>
-                            </div>
-                            <div class="relative group mb-4">
-                                <pre class="bg-black/60 p-4 rounded-2xl text-[11px] text-purple-300 overflow-x-auto border border-white/5 font-mono max-h-48"><code>${s.code}</code></pre>
-                                <button onclick="copyCode(this, \`${s.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`)" 
-                                    class="absolute top-2 right-2 bg-purple-600 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition">
-                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                </button>
-                            </div>
+            data.forEach((s, i) => {
+                let media = s.mediaData ? (s.mediaType === 'image' 
+                    ? `<img src="${s.mediaData}" class="w-full h-80 object-cover rounded-3xl mb-6 shadow-2xl">`
+                    : `<video src="${s.mediaData}" autoplay muted loop class="w-full h-80 object-cover rounded-3xl mb-6 shadow-2xl"></video>`) : '';
+
+                list.innerHTML += `
+                    <div class="glass p-8 rounded-[2.5rem] card-anim border-white/5">
+                        ${media}
+                        <h3 class="text-2xl font-extrabold mb-4">${s.title}</h3>
+                        <div class="relative group">
+                            <pre class="bg-black/40 p-6 rounded-2xl text-[11px] text-purple-300 font-mono mb-6 overflow-x-auto max-h-60 border border-white/5"><code>${s.code}</code></pre>
+                            <button onclick="copyCode(this, \`${s.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\` )" class="absolute top-4 right-4 bg-purple-600 p-2 rounded-xl opacity-0 group-hover:opacity-100 transition shadow-lg">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            </button>
                         </div>
-                    `;
-                });
-            } catch (e) {
-                list.innerHTML = '<p class="text-center text-red-400">Ошибка подключения к серверу</p>';
-            }
+                        <div class="flex justify-between items-center text-xs text-gray-500 uppercase tracking-widest">
+                            <span>Morix Verified</span>
+                            <span>${s.date}</span>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
         function copyCode(btn, text) {
             navigator.clipboard.writeText(text);
-            const oldIcon = btn.innerHTML;
-            btn.innerHTML = '✅';
-            setTimeout(() => btn.innerHTML = oldIcon, 2000);
+            btn.innerHTML = '✅'; setTimeout(() => btn.innerHTML = '📂', 2000);
         }
 
         document.getElementById('searchInput').oninput = (e) => loadPosts(e.target.value);
-        loadPosts();
     </script>
 </body>
 </html>
