@@ -1,96 +1,44 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MORIX</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="background-anim"></div>
+<!-- Внутри <div class="container glass"> -->
+<div id="chat-screen" class="hidden">
+    <!-- Спискок чатов -->
+    <div class="sidebar glass-inner">
+        <div class="search-bar">
+            <input type="text" id="user-search" placeholder="Поиск @ника..." oninput="searchUsers()">
+            <div id="search-results" class="glass-inner hidden"></div>
+        </div>
+        
+        <div class="tabs">
+            <button onclick="switchTab('chats')">Чаты</button>
+            <button onclick="switchTab('groups')">Группы</button>
+        </div>
 
-    <!-- Верхняя панель -->
-    <div class="app-bar">
-        <span class="app-title">MORIX</span>
-        <div class="window-controls">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
+        <div id="chat-list" class="list-area"></div>
+        
+        <div class="bottom-actions">
+            <button onclick="showCreateGroup()"><i class="fa-solid fa-plus"></i> Создать группу</button>
         </div>
     </div>
 
-    <div class="container glass">
-        <!-- Экран авторизации -->
-        <div id="auth-screen">
-            <h1 class="logo-text">MORIX</h1>
-            <input type="text" id="username" placeholder="Никнейм">
-            <input type="password" id="password" placeholder="Пароль">
-            <button onclick="login()">Войти</button>
-            <button onclick="register()" class="secondary">Регистрация</button>
-            <p id="auth-error"></p>
-        </div>
-
-        <!-- Экран чата -->
-        <div id="chat-screen" class="hidden">
-            <!-- Список чатов (Сайдбар) -->
-            <div class="sidebar glass-inner" id="sidebar-view">
-                <div class="search-box">
-                    <input type="text" placeholder="Поиск @users...">
+    <!-- Окно чата -->
+    <div class="main-chat">
+        <div id="no-chat-selected">Выберите, кому написать</div>
+        <div id="chat-window" class="hidden">
+            <div class="chat-header glass-inner">
+                <div class="user-info">
+                    <div class="avatar" id="header-avatar">?</div>
+                    <span id="header-name">Имя</span>
                 </div>
-                <div class="chat-list">
-                    <div class="chat-item" onclick="openChat('Global')">
-                        <div class="avatar">G</div>
-                        <div class="info">
-                            <h4>Global Chat</h4>
-                            <p>Общий чат сообщества</p>
-                        </div>
-                    </div>
-                    <!-- Здесь будут другие чаты -->
-                </div>
-                <div class="user-profile">
-                    <span id="my-username">Я</span>
+                <div class="actions">
+                    <i class="fa-solid fa-phone" onclick="startCall(false)"></i>
+                    <i class="fa-solid fa-video" onclick="startCall(true)"></i>
+                    <i class="fa-solid fa-user-slash" onclick="blockUser()" style="color: #ff4444;"></i>
                 </div>
             </div>
-            
-            <!-- Окно переписки -->
-            <div class="main-chat" id="chat-view">
-                <div class="chat-header glass-inner">
-                    <div class="header-left">
-                        <!-- Кнопка назад только для мобилок -->
-                        <i class="fa-solid fa-arrow-left mobile-back" onclick="backToMenu()"></i>
-                        <span id="current-chat-name">Global Chat</span>
-                    </div>
-                    <div class="actions">
-                        <i class="fa-solid fa-phone" onclick="startCall(false)"></i>
-                        <i class="fa-solid fa-video" onclick="startCall(true)"></i>
-                    </div>
-                </div>
-                
-                <div class="messages-area" id="messages">
-                    <!-- Сообщения -->
-                </div>
-                
-                <div class="input-area glass-inner">
-                    <input type="text" id="msg-input" placeholder="Сообщение..." autocomplete="off">
-                    <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
+            <div class="messages-area" id="messages"></div>
+            <div class="input-area glass-inner">
+                <input type="text" id="msg-input" placeholder="Введите ссылку на фото/видео или текст...">
+                <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
-
-    <!-- Звонок -->
-    <div id="call-modal" class="hidden glass">
-        <video id="remote-video" autoplay playsinline></video>
-        <video id="local-video" autoplay muted playsinline></video>
-        <div class="call-controls">
-            <button onclick="shareScreen()"><i class="fa-solid fa-display"></i></button>
-            <button class="end-call" onclick="endCall()"><i class="fa-solid fa-phone-slash"></i></button>
-        </div>
-    </div>
-
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+</div>
