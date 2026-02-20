@@ -1,5 +1,5 @@
 // Вставь URL своего сервера с Render
-const SERVER_URL = "https://your-app-name.onrender.com"; 
+const SERVER_URL = "https://morix.onrender.com"; 
 
 let socket;
 let currentUser = null;
