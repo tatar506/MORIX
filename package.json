@@ -1,7 +1,6 @@
 {
   "name": "morix-server",
   "version": "1.0.0",
-  "description": "Backend for MORIX Messenger",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -10,11 +9,10 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "mongoose": "^7.5.0",
     "peer": "^1.0.0",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.33.0",
     "socket.io": "^4.7.2"
-  },
-  "engines": {
-    "node": ">=16.0.0"
   }
 }
