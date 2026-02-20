@@ -28,3 +28,4 @@ app.get('/groups', async (req, res) => {
     const groups = await Group.findAll();
     res.json(groups);
 });
+              
